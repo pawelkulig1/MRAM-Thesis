@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import math as mt
+
 
 #3D plot
 from mpl_toolkits.mplot3d import Axes3D 
@@ -9,68 +9,7 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 from data import *
 
-class Coordinates:
-	def __init__(self):
-		self.x = None
-		self.y = None
-		self.z = None
-		self.r = None
-		self.theta = None
-		self.fi = None
 
-	def initSpherical(self, r, theta, fi):
-		self.r = r
-		self.theta = theta
-		self.fi = fi
-		self.x = self.r * mt.sin(self.theta) * mt.cos(self.fi)
-		self.y = self.r * mt.sin(self.theta) * mt.sin(self.fi)
-		self.z = self.r * mt.cos(self.theta)
-
-	def initCartesian(self, x, y, z):
-		self.x = x
-		self.y = y
-		self.z = z
-		self.r = mt.sqrt(self.x**2 + self.y**2 + self.z**2)
-		self.theta = mt.arccos(self.z/self.r)
-		self.fi = mt.arctan(self.y/self.x)
-
-	def getSpherical(self):
-		return self.r, self.theta, self.fi
-
-	def getCartesian(self):
-		return self.x, self.y, self.z
-
-class Gaussian3D:
-	def __init__(self, amplitude, width, theta, fi):
-		#angles in degrees
-		self.amplitude = amplitude
-		self.width = width
-		self.theta = theta
-		self.fi = fi
-		self.r = self.getR()
-		self.cords = Coordinates()
-		self.cords.initSpherical(self.r, self.theta, self.fi)
-
-	def getR(self):
-		# return 10
-		return self.amplitude / mt.sin((90 * mt.pi / 180) - self.theta)
-
-	def gaussianFunction3D(self, x, y):
-		# print(self.cords.x**2 + self.cords.y**2)
-		return self.amplitude * mt.exp(-((x + self.cords.x)**2 + (y + self.cords.y)**2)/(2 * self.width**2))
-
-	def getGaussianData(self):
-		X = np.arange(-10, 10, 0.25)
-		Y = np.arange(-10, 10, 0.25)
-		Z = []
-		i = 0
-		for x in X:
-			Z.append([])
-			for y in Y:
-				Z[i].append(self.gaussianFunction3D(x, y))
-			i+=1
-
-		return np.array(Z)
 
 X = np.arange(-10, 10, 0.25)
 Y = np.arange(-10, 10, 0.25)
@@ -82,7 +21,7 @@ Z = np.zeros((len(X), len(Y)))
 for i, line in enumerate(data):
 
 # Gaussian = Gaussian3D(-2.500, 0.200, 0.600, 3.700)
-	Gaussian = Gaussian3D(line[1], line[2], line[3], line[4])
+	Gaussian = Gaussian3D(line[1], line[2], line[3], line[4], 5, 0.25)
 	# print(Gaussian1.cords.getCartesian())
 	Z += Gaussian.getGaussianData()
 
