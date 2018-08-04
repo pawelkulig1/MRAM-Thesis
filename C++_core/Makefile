@@ -18,8 +18,3 @@ clean:
 %.o: %.cpp 
 	$(CXX) -c $<
 
-#vector.o:
-#	$(CC) vector.cpp
-
-#.cpp.o:
-#	$(CC) -c $(INCLUDES) $(CFLAGS) $<
