@@ -1,0 +1,68 @@
+#include "Point.h"
+
+using namespace GNEB;
+
+int Point::counter = 0;
+
+Point::Point(): x(0), y(0), z(0)
+{
+    counter++;
+}
+
+Point::Point(double x, double y, double z): x(x), y(y), z(z)
+{
+    counter++;
+}
+
+double Point::getX()
+{
+    return Point::x;
+}
+
+double Point::getY()
+{
+    return Point::y;
+}
+
+double Point::getZ()
+{
+    return Point::z;
+}
+
+void Point::setX(double x)
+{
+    Point::x = x;
+}
+
+void Point::setY(double y)
+{
+    Point::y = y;
+}
+
+void Point::setZ(double z)
+{
+    Point::z = z;
+}
+
+Eigen::Vector3d Point::getVector()
+{
+    return Eigen::Vector3d(x,y,z);
+}
+
+void Point::print()
+{
+	std::cout << "[" + boost::lexical_cast<std::string>(x) + ", "
+		   	+ boost::lexical_cast<std::string>(y) + ", "
+			+ boost::lexical_cast<std::string>(z) + "]"; 
+	
+}
+
+
+/*std::ostream& operator<<(std::ostream& os, Point *p)
+{
+	os<<"ala ma kota";
+		std::cout << "[" + boost::lexical_cast<std::string>(p->getX()) + ", "
+		   	+ boost::lexical_cast<std::string>(p->getY()) + ", "
+		   	+ boost::lexical_cast<std::string>(p->getZ()) + "]"; 
+	return os;
+}*/
