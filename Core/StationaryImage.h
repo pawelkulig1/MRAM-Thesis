@@ -6,17 +6,14 @@
 
 namespace GNEB
 {
-    class StationaryImage: public Point
+    class StationaryImage : public Point
     {
-		const double x, y, z;
     public:
         StationaryImage(double x, double y, double z);
-		double getX();
-		double getY();
-		double getZ();
-		void setX(double);
-		void setY(double);
-		void setZ(double);
+        void setX(double x);
+        void setY(double y);
+        void setZ(double z);
+        //void print(){};
     };
 }
 

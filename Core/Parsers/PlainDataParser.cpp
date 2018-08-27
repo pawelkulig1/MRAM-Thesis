@@ -59,7 +59,7 @@ std::deque<std::deque<Point *>> PlainDataParser::parse()
 		
 	std::deque<std::string> lines;
 	boost::split(lines, temp, boost::is_any_of(",")); 
-	std::deque<Point*> deqTemp;
+	std::deque<Point *> deqTemp;
 	std::deque<std::string>::iterator it = lines.begin();
 	for(int j=0;j<ysize;j++)
 	{
@@ -72,7 +72,6 @@ std::deque<std::deque<Point *>> PlainDataParser::parse()
 		}
 		data.push_back(deqTemp);
 	}
-
 	return data;
 }
 

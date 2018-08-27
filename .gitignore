@@ -107,3 +107,13 @@ venv.bak/
 optymalizacja_impulsu.pdf
 .DS_STORE
 .idea/
+Core/Eigen/
+Core/boost/
+*.o
+*.vim
+.gtags
+.files
+*.swp
+GPATH
+GTAGS
+GRTAGS

@@ -97,7 +97,7 @@ Point *Plane::getPointNM(int x, int y)
 	if(x > xnum-1 || y > ynum-1 || x<0 || y<0)
 	{
 		std::cout<<"bad x or y value in getPointNM! "<<x<<" "<<y<<" "<<xnum<<" "<<ynum<<std::endl;
-		return nullptr;
+        return nullptr; 
 	}	
     return points[y][x];//not sure if I can do smth about that
     //this is caused by input file format and parser, we parse symbol after symbol and they go first n 

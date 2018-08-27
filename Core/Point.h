@@ -15,14 +15,14 @@ namespace GNEB
     public:
         Point(double x, double y, double z);
         Point();
-        double getX();
-        double getY();
-        double getZ();
-        void setX(double x);
-        void setY(double y);
-        void setZ(double z);
-		void print();
-        Eigen::Vector3d getVector();
+        virtual double getX();
+        virtual double getY();
+        virtual double getZ();
+        virtual void setX(double x);
+        virtual void setY(double y);
+        virtual void setZ(double z);
+		virtual void print();
+        virtual Eigen::Vector3d getVector();
 //		friend std::ostream& operator<<(std::ostream& os, Point *p);
     };
 }

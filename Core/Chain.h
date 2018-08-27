@@ -27,6 +27,8 @@ namespace GNEB
 		void setLast(StationaryImage *p);
 		void setLast(Point *p);
 		void calculateInterpolation(int Q);
+        StationaryImage *getFirst();
+        StationaryImage *getLast();
 		//calculate interpolation of initial path
 
 		void recalculateChain(); 

@@ -10,13 +10,20 @@ FLAGS= --std=c++17
 LIBS = -I/Parsers -I. -IEigen -Iboost
 OUT= main.o
 
+TEST_FLAGS= --std=c++17 -lboost_unit_test_framework -g
+
+
 main.o: Point.o StationaryImage.o MovingImage.o Chain.o Plane.o PlainDataParser.o main.cpp
 	$(CXX) -o main.o main.cpp $(FILES) $(LIBS) $(FLAGS)
+
+test: main.o tests/test2.cpp
+	$(CXX) -o tests/test.o tests/test2.cpp $(FILES) $(TEST_FLAGS) $(LIBS)
+	./tests/test.o
 
 Point.o: Point.h Point.cpp
 	$(CXX) -c Point.cpp $(LIBS) $(FLAGS)
 
-StationaryImage.o: StationaryImage.h StationaryImage.cpp Point.h Point.cpp
+StationaryImage.o: StationaryImage.h StationaryImage.cpp 
 	$(CXX) -c StationaryImage.cpp $(LIBS) $(FLAGS)
 
 MovingImage.o: MovingImage.h MovingImage.cpp

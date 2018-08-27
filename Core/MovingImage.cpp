@@ -5,6 +5,10 @@ using namespace GNEB;
 MovingImage::MovingImage(double x, double y, double z): Point(x, y, z) 
 {
     kappa = 1;
+    x_h = nullptr;
+    y_h = nullptr;
+    next = nullptr;
+    previous = nullptr;    
 }
 
 Eigen::Vector3d MovingImage::calculateDerivative()
@@ -32,7 +36,6 @@ Eigen::Vector3d MovingImage::calculateTangent()
     else{
         std::cout<<"next == nullptr"<<std::endl;
     }
-    std::cout<<"next and ours vector"<<next->getVector()<<" "<<getVector()<<std::endl;
     tau = temp / temp.norm();
     Eigen::Vector3d derivative = calculateDerivative();
     dE = derivative - (derivative.dot(tau))*(tau);
@@ -62,11 +65,8 @@ Eigen::Vector3d MovingImage::calculateTotalForce()
 Eigen::Vector3d MovingImage::iterate()
 {
     calculateTangent();
-    std::cout<<"tangent: "<<tau<<" "<<dE<<std::endl;
     calculateSpring();
-    std::cout<<"spring: "<<spring<<std::endl;
     calculateTotalForce();
-    std::cout<<"NEB: "<<NEBForce<<std::endl;
     moveByVector(NEBForce);
 }
 
@@ -82,7 +82,6 @@ void MovingImage::moveByVector(Eigen::Vector3d v)
 {
     //double t_x = x + v[0];
     //double t_y = y + v[1];
-    std::cout<<v[0]<<" "<<v[1]<<std::endl;
     x += v[0];
     y += v[1];
     Point *p = Plane::getInstance()->getPointXY(x,y);
@@ -110,4 +109,9 @@ void MovingImage::setX_h(Point *p)
 void MovingImage::setY_h(Point *p)
 {
     this->y_h = p;
+}
+
+void MovingImage::print()
+{
+    std::cout<<"["<<x<<", "<<y<<", "<<z<<", "<< x_h->getX()<<" "<<x_h->getY()<< "<<x_h"<< "<<y_h"<<" ]"<<std::endl;
 }

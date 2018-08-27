@@ -30,6 +30,7 @@ namespace GNEB
 		void setY_h(Point *p);
         void setNext(Point *p);
         void setPrevious(Point *p);
+        void print();
 	};
 }
 

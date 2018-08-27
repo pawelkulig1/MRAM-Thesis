@@ -51,9 +51,10 @@ Eigen::Vector3d Point::getVector()
 
 void Point::print()
 {
-	std::cout << "[" + boost::lexical_cast<std::string>(x) + ", "
+	/*std::cout << "[" + boost::lexical_cast<std::string>(x) + ", "
 		   	+ boost::lexical_cast<std::string>(y) + ", "
-			+ boost::lexical_cast<std::string>(z) + "]"; 
+			+ boost::lexical_cast<std::string>(z) + "]"; */
+    std::cout<<"[" << x <<", "<<y<<", "<<z <<"]"<<std::endl;
 	
 }
 
