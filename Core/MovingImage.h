@@ -9,7 +9,7 @@ namespace GNEB
 {
 	class MovingImage : public Point
 	{
-		double x, y, z, kappa; // kappa is spring constant
+		double kappa; // kappa is spring constant
 		Point *x_h, *y_h; //x_h point and y_h are to faster calculate derivate dE and not to search for it. They will store closest Point with coordinates x_h = (x+dx, y); y_h = (x, y+dy).
         Point *next, *previous;
         Eigen::Vector3d tau;
@@ -30,12 +30,6 @@ namespace GNEB
 		void setY_h(Point *p);
         void setNext(Point *p);
         void setPrevious(Point *p);
-        double getX();
-        double getY();
-        double getZ();
-        void setX(double x);
-        void setY(double y);
-        void setZ(double z);
 	};
 }
 

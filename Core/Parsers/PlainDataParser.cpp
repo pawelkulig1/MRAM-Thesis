@@ -67,7 +67,6 @@ std::deque<std::deque<Point *>> PlainDataParser::parse()
 		for(int i=0;i<xsize;i++)
 		{
 			Point *p = new Point(i*dx + xpos, j*dy + ypos, std::stod(*it, nullptr));
-            p->print();
 			deqTemp.push_back(p);
 			it++;
 		}

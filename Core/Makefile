@@ -10,7 +10,7 @@ FLAGS= --std=c++17
 LIBS = -I/Parsers -I. -IEigen -Iboost
 OUT= main.o
 
-main.o: Point.o StationaryImage.o MovingImage.o Chain.o Plane.o PlainDataParser.o
+main.o: Point.o StationaryImage.o MovingImage.o Chain.o Plane.o PlainDataParser.o main.cpp
 	$(CXX) -o main.o main.cpp $(FILES) $(LIBS) $(FLAGS)
 
 Point.o: Point.h Point.cpp

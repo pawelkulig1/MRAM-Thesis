@@ -3,6 +3,7 @@
 #include "Parsers/PlainDataParser.h"
 #include <deque>
 #include <assert.h>
+#include "MovingImage.h"
 
 using namespace std;
 using namespace GNEB;
@@ -11,12 +12,14 @@ void TestPlainParserProperFile(string path);
 void TestPlainParserWrongFile(string path);
 void TestPlainParserCorruptedData(string path);
 void TestPlaneInitialisation(string path);
+void TestMovingImageFunctions();
 
 int main()
 {
     TestPlainParserProperFile("data.dat"); 
     TestPlainParserWrongFile("dataNotExisting.dat");
     TestPlaneInitialisation("data.dat");
+    TestMovingImageFunctions();
 }
 
 void TestPlainParserProperFile(string path)
@@ -61,4 +64,11 @@ void TestPlaneInitialisation(string path)
     assert(plane->getDy() == 1);
     assert(plane->getPoints().size() == 10);
     assert(plane->getPoints()[0].size() == 10);
+}
+
+void TestMovingImageFunctions()
+{
+    MovingImage *m = new MovingImage(1,2,3);
+    assert(m->getVector() == Eigen::Vector3d(1,2,3));
+    std::cout<<"[PASSED]"<<std::endl;
 }

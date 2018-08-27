@@ -94,7 +94,10 @@ void Chain::calculateInterpolation(int Q)
 	for(int v=1;v<Q+1;v++)
 	{
 		temp = R1 + v * (RQ - R1) / (Q+1);
+        //std::cout<<temp[0]<<" "<<temp[1]<<" "<<temp[2]<<std::endl;
 		addToChain(MovingImage(temp[0], temp[1], temp[2]));
+        std::cout<<chain[v-1].getX()<<" "<<chain[v-1].getY()<<" "<<chain[v-1].getZ();
+        std::cout<<std::endl;
 	}
     chain[chain.size() - 1].setNext(last);
 

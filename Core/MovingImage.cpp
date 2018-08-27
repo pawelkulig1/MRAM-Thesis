@@ -2,8 +2,9 @@
 
 using namespace GNEB;
 
-MovingImage::MovingImage(double x, double y, double z): x(x), y(y), z(z)
+MovingImage::MovingImage(double x, double y, double z): Point(x, y, z) 
 {
+    kappa = 1;
 }
 
 Eigen::Vector3d MovingImage::calculateDerivative()
@@ -28,6 +29,10 @@ Eigen::Vector3d MovingImage::calculateTangent()
     {
         temp = next->getVector() - getVector();
     }
+    else{
+        std::cout<<"next == nullptr"<<std::endl;
+    }
+    std::cout<<"next and ours vector"<<next->getVector()<<" "<<getVector()<<std::endl;
     tau = temp / temp.norm();
     Eigen::Vector3d derivative = calculateDerivative();
     dE = derivative - (derivative.dot(tau))*(tau);
@@ -57,8 +62,11 @@ Eigen::Vector3d MovingImage::calculateTotalForce()
 Eigen::Vector3d MovingImage::iterate()
 {
     calculateTangent();
+    std::cout<<"tangent: "<<tau<<" "<<dE<<std::endl;
     calculateSpring();
+    std::cout<<"spring: "<<spring<<std::endl;
     calculateTotalForce();
+    std::cout<<"NEB: "<<NEBForce<<std::endl;
     moveByVector(NEBForce);
 }
 
@@ -72,17 +80,16 @@ void MovingImage::moveToCords(double x, double y)
 
 void MovingImage::moveByVector(Eigen::Vector3d v)
 {
-
-}
-
-void MovingImage::setX_h(Point *p)
-{
-	this->x_h = p;
-}
-
-void MovingImage::setY_h(Point *p)
-{
-	this->y_h = p;
+    //double t_x = x + v[0];
+    //double t_y = y + v[1];
+    std::cout<<v[0]<<" "<<v[1]<<std::endl;
+    x += v[0];
+    y += v[1];
+    Point *p = Plane::getInstance()->getPointXY(x,y);
+    if(p != nullptr)
+        z = p->getZ();
+    else
+        std::cout<<"Point out of calculation space!"<<std::endl;
 }
 
 void MovingImage::setNext(Point *p)
@@ -95,35 +102,12 @@ void MovingImage::setPrevious(Point *p)
     this->previous = p;
 }
 
-double MovingImage::getX()
+void MovingImage::setX_h(Point *p)
 {
-    return this->x; 
+    this->x_h = p;
 }
 
-double MovingImage::getY()
+void MovingImage::setY_h(Point *p)
 {
-    return this->y;
+    this->y_h = p;
 }
-
-double MovingImage::getZ()
-{
-    return this->z;
-}
-
-void MovingImage::setX(double x)
-{
-    this->x = x;
-}
-
-void MovingImage::setY(double y)
-{
-    this->y = y;
-}
-
-void MovingImage::setZ(double z)
-{
-    this->z = z;
-}
-
-
-
