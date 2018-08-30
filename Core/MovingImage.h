@@ -17,11 +17,12 @@ namespace GNEB
 		Eigen::Vector3d spring;
         Eigen::Vector3d NEBForce;
 
+    public:
 		Eigen::Vector3d calculateDerivative();
         Eigen::Vector3d calculateTangent();
         Eigen::Vector3d calculateSpring();
         Eigen::Vector3d calculateTotalForce();
-    public:
+
 		MovingImage(double x, double y, double z);
         Eigen::Vector3d iterate();
 		void moveToCords(double x, double y);

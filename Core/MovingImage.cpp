@@ -4,9 +4,13 @@ using namespace GNEB;
 
 MovingImage::MovingImage(double x, double y, double z): Point(x, y, z) 
 {
+    double dx, dy;
+    auto plane = Plane::getInstance();
+    dx = plane->getDx();
+    dy = plane->getDy();
     kappa = 1;
-    x_h = nullptr;
-    y_h = nullptr;
+    x_h = plane->getPointXY(x + dx, y);
+    y_h = plane->getPointXY(x, y + dy);
     next = nullptr;
     previous = nullptr;    
 }
@@ -113,5 +117,6 @@ void MovingImage::setY_h(Point *p)
 
 void MovingImage::print()
 {
-    std::cout<<"["<<x<<", "<<y<<", "<<z<<", "<< x_h->getX()<<" "<<x_h->getY()<< "<<x_h"<< "<<y_h"<<" ]"<<std::endl;
+    std::cout<<"["<<x<<", "<<y<<", "<<z<<", x_h: ["<< x_h->getX()<<", "
+        <<x_h->getY()<<", "<<x_h->getZ()<<"], y_h: ["<< y_h->getX() <<", "<<y_h->getY()<<", "<<y_h->getZ()<<"]]"<<std::endl;
 }

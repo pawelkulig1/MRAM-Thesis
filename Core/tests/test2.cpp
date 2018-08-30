@@ -61,21 +61,40 @@ BOOST_AUTO_TEST_CASE(testParser3) {
    plane = nullptr;
 }
 
-BOOST_AUTO_TEST_CASE(testParser4) {
+BOOST_AUTO_TEST_CASE(testPoint1) {
    Point *m = new Point(0, 0, 0);
    BOOST_CHECK_EQUAL(m->getVector(), Eigen::Vector3d(0, 0, 0));
    delete m;
 }
 
+BOOST_AUTO_TEST_CASE(testMovingImageCorrect)
+{
+    MovingImage *mi = new MovingImage(1, 1, 1);
+}
 
-BOOST_AUTO_TEST_CASE(testParser5) {
+BOOST_AUTO_TEST_CASE(testMovingImageCorrectDerivative)
+{
+    MovingImage *mi = new MovingImage(1, 1, 1);
+    BOOST_CHECK_EQUAL(mi->calculateDerivative(), Eigen::Vector3d(12, 21, 0));
+}
+
+BOOST_AUTO_TEST_CASE(testMovingImageCorrectTangent)
+{
+    double z = Plane::getInstance()->getPointXY(2,2)->getZ();
+    MovingImage *mi = new MovingImage(2, 2, z);
+    BOOST_CHECK_EQUAL(mi->calculateTangent(), Eigen::Vector3d(0,0,0)); //TODO calculate if correct
+}
+
+
+
+
+
+BOOST_AUTO_TEST_CASE(testChain1) {
    Chain *c = Chain::getInstance();
    Parser::PlainDataParser *parser = new Parser::PlainDataParser("tests/data.dat");
    Plane *plane = Plane::getInstance();
    plane->initializeWithParser(parser);
 
-   plane->getPointXY(8,1)->print();
-   plane->getPointXY(8,8)->print();
    c->setFirst(plane->getPointXY(8, 1));
    c->setLast(plane->getPointXY(8, 8));
    
@@ -86,4 +105,11 @@ BOOST_AUTO_TEST_CASE(testParser5) {
 
    delete parser;
 }
+
+BOOST_AUTO_TEST_CASE(test6)
+{
+    std::cout;
+}
+
+
 //}

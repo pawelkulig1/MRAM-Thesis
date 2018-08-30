@@ -117,3 +117,7 @@ Core/boost/
 GPATH
 GTAGS
 GRTAGS
+*DS_Store
+tests/test.o*
+main.o*
+C++_core/*
