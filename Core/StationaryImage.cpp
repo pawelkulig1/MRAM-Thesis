@@ -21,3 +21,7 @@ void StationaryImage::setZ(double z)
 	//throw("Error in StationaryImage.cpp::setZ(double) const value cannot be changed!");
 }
 
+void StationaryImage::print()
+{
+    std::cout<<"["<<x<<", "<<y<<", "<<z<<"]"<<std::endl;
+}

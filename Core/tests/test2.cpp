@@ -12,16 +12,19 @@
 //BOOST_AUTO_TEST_SUITE(whole_suite)
 
 BOOST_AUTO_TEST_CASE(testParser) {
-   Parser::PlainDataParser *parser = new Parser::PlainDataParser("tests/data.dat");
+   //Parser::PlainDataParser *parser = new Parser::PlainDataParser("tests/data.dat");
    //parser->parse();
 
+
+   Plane *p = Plane::getInstance();
+   BOOST_CHECK_EQUAL(p->getPoints().size(), 0);
    /*BOOST_CHECK_EQUAL(parser->getXSize(), 10);
    BOOST_CHECK_EQUAL(parser->getYSize(), 10);
    BOOST_CHECK_CLOSE(parser->getXpos(), 0, 1e-5);
    BOOST_CHECK_CLOSE(parser->getYpos(), 0, 1e-5);
    BOOST_CHECK_CLOSE(parser->getDx(), 1, 1e-5);
    BOOST_CHECK_CLOSE(parser->getDy(), 1, 1e-5);*/
-   delete parser;
+   //delete parser;
 }
 
 
@@ -36,7 +39,7 @@ BOOST_AUTO_TEST_CASE(testParser2) {
        
    }
    //BOOST_CHECK_EQUAL(parser->parse().size(), 0);
-   delete parser;
+   //delete parser;
 }
 
 
@@ -55,7 +58,7 @@ BOOST_AUTO_TEST_CASE(testParser3) {
    BOOST_CHECK_EQUAL(plane->getPoints().size(), 10);
    BOOST_CHECK_EQUAL(plane->getPoints()[0].size(), 10);
    delete parser;
-
+   plane = nullptr;
 }
 
 BOOST_AUTO_TEST_CASE(testParser4) {
@@ -70,19 +73,17 @@ BOOST_AUTO_TEST_CASE(testParser5) {
    Parser::PlainDataParser *parser = new Parser::PlainDataParser("tests/data.dat");
    Plane *plane = Plane::getInstance();
    plane->initializeWithParser(parser);
-   //delete plane;
-   //delete c;
-   //delete parser;
-//    MovingImage *mi = new MovingImage(1, 2, 3);
-//    mi->getX();
-//    StationaryImage *st = new StationaryImage(1, 2, 3);
-   //st->getX();
-   //c->setFirst(plane->getPointXY(8, 1));
-   //c->setLast(plane->getPointXY(8, 8));
-   //BOOST_CHECK_EQUAL(c->getFirst()->getX(), 8);
-   //BOOST_CHECK_EQUAL(c->getFirst()->getY(), 1);
-   //BOOST_CHECK_EQUAL(c->getLast()->getX(), 8);
-   //BOOST_CHECK_EQUAL(c->getLast()->getY(), 8);
 
+   plane->getPointXY(8,1)->print();
+   plane->getPointXY(8,8)->print();
+   c->setFirst(plane->getPointXY(8, 1));
+   c->setLast(plane->getPointXY(8, 8));
+   
+   BOOST_CHECK_EQUAL(c->getFirst()->getX(), 8);
+   BOOST_CHECK_EQUAL(c->getFirst()->getY(), 1);
+   BOOST_CHECK_EQUAL(c->getLast()->getX(), 8);
+   BOOST_CHECK_EQUAL(c->getLast()->getY(), 8);
+
+   delete parser;
 }
 //}

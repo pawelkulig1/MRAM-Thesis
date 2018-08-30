@@ -7,7 +7,7 @@ PlainDataParser::PlainDataParser(std::string filename): filename(filename)
 	confname = filename.substr(0, filename.find(".dat")) + ".conf";
 }
 
-void inline incrementer(int &poz1, int &poz2, std::string &temp)
+void PlainDataParser::incrementer(int &poz1, int &poz2, std::string &temp)
 {	
 	poz1 = poz2;
 	poz2 = temp.find(",", poz1+1);
@@ -26,27 +26,25 @@ bool PlainDataParser::parseConfig()
 	handle >> temp;
 	handle.close();
 	int poz1 = temp.find(",");
-	xsize = std::stoi(temp.substr(0, poz1), nullptr);
+	xsize = std::stoi(temp.substr(0, poz1));
 	int poz2 = temp.find(",", poz1+1);
-	ysize = std::stoi(temp.substr(poz1+1, poz2), nullptr);
+	ysize = std::stoi(temp.substr(poz1+1, poz2));
 	incrementer(poz1, poz2, temp);
-	dx = std::stoi(temp.substr(poz1+1, poz2), nullptr)/xsize;
+	dx = std::stoi(temp.substr(poz1+1, poz2))/xsize;
 	incrementer(poz1, poz2, temp);
-	dy = std::stoi(temp.substr(poz1+1, poz2), nullptr)/ysize;
+	dy = std::stoi(temp.substr(poz1+1, poz2))/ysize;
 	incrementer(poz1, poz2, temp);
-	xpos = std::stoi(temp.substr(poz1+1, poz2), nullptr);
+	xpos = std::stoi(temp.substr(poz1+1, poz2));
 	incrementer(poz1, poz2, temp);
-	ypos = std::stoi(temp.substr(poz1+1, poz2), nullptr);
+	ypos = std::stoi(temp.substr(poz1+1, poz2));
     return true;
 
 }
 
-std::deque<std::deque<Point *>> PlainDataParser::parse()
+void PlainDataParser::parse(std::deque<std::deque<Point>> *data)
 {
-    std::deque<std::deque<Point *>> data;
-
     if(!parseConfig())
-        return data; 
+        throw("Config fille cannot be parsed!");
 	handle.open(filename, std::ios::in);
 	std::string temp;
 	if(!handle.good())
@@ -59,20 +57,20 @@ std::deque<std::deque<Point *>> PlainDataParser::parse()
 		
 	std::deque<std::string> lines;
 	boost::split(lines, temp, boost::is_any_of(",")); 
-	std::deque<Point *> deqTemp;
+	std::deque<Point > deqTemp;
 	std::deque<std::string>::iterator it = lines.begin();
 	for(int j=0;j<ysize;j++)
 	{
-		deqTemp.erase(deqTemp.begin(), deqTemp.end());	
+		if(!deqTemp.empty())
+            deqTemp.erase(deqTemp.begin(), deqTemp.end());	
 		for(int i=0;i<xsize;i++)
 		{
-			Point *p = new Point(i*dx + xpos, j*dy + ypos, std::stod(*it, nullptr));
+			Point p = Point(i*dx + xpos, j*dy + ypos, std::stod(*it));
 			deqTemp.push_back(p);
 			it++;
 		}
-		data.push_back(deqTemp);
+	    data->push_back(deqTemp);
 	}
-	return data;
 }
 
 int PlainDataParser::getXSize()

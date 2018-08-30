@@ -10,10 +10,10 @@ namespace GNEB
     {
     public:
         StationaryImage(double x, double y, double z);
-        void setX(double x);
-        void setY(double y);
-        void setZ(double z);
-        //void print(){};
+        void setX(double x) override ;
+        void setY(double y) override ;
+        void setZ(double z) override ;
+        void print() override ;
     };
 }
 

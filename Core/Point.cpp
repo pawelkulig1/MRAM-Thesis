@@ -67,3 +67,5 @@ void Point::print()
 		   	+ boost::lexical_cast<std::string>(p->getZ()) + "]"; 
 	return os;
 }*/
+
+

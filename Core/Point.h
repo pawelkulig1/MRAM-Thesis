@@ -12,17 +12,23 @@ namespace GNEB
     protected:
         double x, y, z;
         static int counter;
+        //Point *x_h, *y_h;
     public:
         Point(double x, double y, double z);
         Point();
-        virtual double getX();
-        virtual double getY();
-        virtual double getZ();
+        double getX();
+        double getY();
+        double getZ();
         virtual void setX(double x);
         virtual void setY(double y);
         virtual void setZ(double z);
-		virtual void print();
-        virtual Eigen::Vector3d getVector();
+        virtual void print();
+
+        //
+        //void setX_h(Point *p);
+        //void setY_h(Point *p);
+
+        Eigen::Vector3d getVector();
 //		friend std::ostream& operator<<(std::ostream& os, Point *p);
     };
 }

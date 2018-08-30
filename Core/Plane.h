@@ -14,7 +14,7 @@ namespace GNEB
         static Plane *instance;
         double xpos, ypos, zpos, dx, dy;
         int xnum, ynum;
-        std::deque<std::deque<Point *>> points;
+        std::deque<std::deque<Point>> points;
         Plane(){}
     public:
         static Plane *getInstance();
@@ -29,10 +29,10 @@ namespace GNEB
         double getDy();
         int getXnum();
         int getYnum();
-        void setPoints(std::deque<std::deque<Point *>> p);
+        void setPoints(std::deque<std::deque<Point>> p);
         Point *getPointXY(double x, double y);
         Point *getPointNM(int x, int y);
-        std::deque<std::deque<Point *>> getPoints();
+        std::deque<std::deque<Point >> getPoints();
     };
 
 }

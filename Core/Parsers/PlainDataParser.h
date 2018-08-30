@@ -5,7 +5,7 @@
 #include <deque>
 #include <boost/algorithm/string.hpp> //split
 
-#include "Point.h"
+#include "../Point.h"
 using namespace GNEB;
 
 namespace Parser
@@ -19,9 +19,10 @@ namespace Parser
 		int xsize, ysize;
 		double dx, dy, xpos, ypos;
 		bool parseConfig();
-	public:
+        void incrementer(int &poz1, int &poz2, std::string &temp);
+    public:
 		PlainDataParser(std::string filename);
-		std::deque<std::deque<Point *>> parse();
+		void parse(std::deque<std::deque<Point>> *p);
 		int getXSize();
 		int getYSize();
 		double getXpos();

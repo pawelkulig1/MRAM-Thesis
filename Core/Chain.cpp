@@ -31,7 +31,7 @@ void Chain::addToChain(MovingImage p)
     TempPoint = plane->getPointXY(p.getX(), p.getY() + plane->getDy());
     
     p.setY_h(TempPoint);
-    if(chain.size() == 0)
+/*    if(chain.size() == 0)
     {
         p.setPrevious(first);
     }
@@ -40,13 +40,13 @@ void Chain::addToChain(MovingImage p)
     {
         chain[chain.size() - 1].setNext(&p);
         p.setPrevious(&chain[chain.size() - 1]);
-    }
+    }*/
 
     TempPoint = plane->getPointXY(p.getX(), p.getY());
     p.setX(TempPoint->getX());
     p.setY(TempPoint->getY());
     p.setZ(TempPoint->getZ());
-    std::cout<<&p<<std::endl;
+    //std::cout<<&p<<std::endl;
 	chain.push_back(p);
 	recalculateChain();
 }
@@ -86,29 +86,29 @@ void Chain::addToChain(MovingImage *p)
 	recalculateChain();
 }
 
-std::deque<MovingImage>::iterator Chain::begin()
+std::deque<Point>::iterator Chain::begin()
 {
 	return chain.begin();
 }
 
-std::deque<MovingImage>::iterator Chain::end()
+std::deque<Point>::iterator Chain::end()
 {
 	return chain.end();
 }
 
 void Chain::setFirst(StationaryImage *p)
 {
-	this->first = p;
+    this->first = p;
 }
 
 void Chain::setFirst(Point *p)
 {
-	this->first = static_cast<StationaryImage *>(p);
+    this->first = static_cast<StationaryImage *>(p);
 }
 
 void Chain::setLast(StationaryImage *p)
 {
-	this->last = p;	
+    this->last = p;
 }
 
 void Chain::setLast(Point *p)

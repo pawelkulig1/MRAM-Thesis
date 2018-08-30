@@ -4,7 +4,9 @@
 #include <Eigen/Dense>
 #include "StationaryImage.h"
 #include "MovingImage.h"
+#include "Point.h"
 #include <iostream>
+#include "Plane.h"
 
 
 namespace GNEB
@@ -13,18 +15,19 @@ namespace GNEB
 	{
 		static Chain *instance;
 		Chain(){};
-		std::deque<MovingImage> chain;
-		StationaryImage	*first, *last;
+		std::deque<Point> chain;
+        StationaryImage	*first, *last;
+		//Point *first, *last;
 	public:
 		static Chain *getInstance();
 		Point getPoint(unsigned int number);
-		std::deque<MovingImage>::iterator begin();
-		std::deque<MovingImage>::iterator end();
+		std::deque<Point>::iterator begin();
+		std::deque<Point>::iterator end();
 		void addToChain(MovingImage p);
 		void addToChain(MovingImage *p);
-		void setFirst(StationaryImage *p);
+        void setFirst(StationaryImage *p);
 		void setFirst(Point *p);
-		void setLast(StationaryImage *p);
+   		void setLast(StationaryImage *p);
 		void setLast(Point *p);
 		void calculateInterpolation(int Q);
         StationaryImage *getFirst();

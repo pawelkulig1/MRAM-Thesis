@@ -14,9 +14,12 @@ Plane *Plane::getInstance()
 
 void Plane::initializeWithParser(Parser::PlainDataParser *parser)
 {
-	this->points = parser->parse();
+    points.erase(points.begin(), points.end());
+    parser->parse(&points);
+
 	this->xpos = parser->getXpos();
 	this->ypos = parser->getYpos();
+
 	this->zpos = 0; //CHECK IF NEEDED
 	this->dx = parser->getDx();
 	this->dy = parser->getDy();
@@ -74,12 +77,12 @@ int Plane::getYnum()
     return Plane::ynum;
 }
 
-void Plane::setPoints(std::deque<std::deque<Point *>> p)
+void Plane::setPoints(std::deque<std::deque<Point>> p)
 {
     Plane::points = p;
 }
 
-std::deque<std::deque<Point *>> Plane::getPoints()
+std::deque<std::deque<Point>> Plane::getPoints()
 {
     return Plane::points;
 }
@@ -99,7 +102,7 @@ Point *Plane::getPointNM(int x, int y)
 		std::cout<<"bad x or y value in getPointNM! "<<x<<" "<<y<<" "<<xnum<<" "<<ynum<<std::endl;
         return nullptr; 
 	}	
-    return points[y][x];//not sure if I can do smth about that
+    return &points[y][x];//not sure if I can do smth about that
     //this is caused by input file format and parser, we parse symbol after symbol and they go first n 
     //symbols has coordinates with increasing x so [0...n][0], but array in goes like this [col][row] 
     //so it has to be considered somewhere to switch these two.
