@@ -80,13 +80,56 @@ BOOST_AUTO_TEST_CASE(testMovingImageCorrectDerivative)
 
 BOOST_AUTO_TEST_CASE(testMovingImageCorrectTangent)
 {
-    double z = Plane::getInstance()->getPointXY(2,2)->getZ();
+    double z = Plane::getInstance()->getPointXY(2, 2)->getZ();
+    double z_next = Plane::getInstance()->getPointXY(2, 3)->getZ();
+    double z_prev = Plane::getInstance()->getPointXY(2, 1)->getZ();
+    
     MovingImage *mi = new MovingImage(2, 2, z);
-    BOOST_CHECK_EQUAL(mi->calculateTangent(), Eigen::Vector3d(0,0,0)); //TODO calculate if correct
+    MovingImage *mi_next = new MovingImage(2, 3, z_next);
+    MovingImage *mi_prev = new MovingImage(2, 1, z_prev);
+    mi->setNext(mi_next);
+    mi->setPrevious(mi_prev);
+    double error = 10; //percent of error TODO check values
+    BOOST_CHECK_CLOSE(mi->calculateTangent()[0], 1, error); //TODO calculate if correct
+    BOOST_CHECK_CLOSE(mi->calculateTangent()[1], 10, error);//TODO calculate if correct
+    BOOST_CHECK_CLOSE(mi->calculateTangent()[2], -1, error); //TODO calculate if correct
 }
 
 
+BOOST_AUTO_TEST_CASE(testMovingImageCorrectSpring)
+{
+    double z = Plane::getInstance()->getPointXY(3, 3)->getZ();
+    double z_next = Plane::getInstance()->getPointXY(4, 4)->getZ();
+    double z_prev = Plane::getInstance()->getPointXY(1, 1)->getZ(); 
+    MovingImage *mi = new MovingImage(3, 3, z);
+    MovingImage *mi_next = new MovingImage(4, 4, z_next);
+    MovingImage *mi_prev = new MovingImage(1, 1, z_prev);
+    mi->setNext(mi_next);
+    mi->setPrevious(mi_prev);
+    double error = 1; //percent of error TODO check values
+    BOOST_CHECK_CLOSE(mi->calculateSpring()[0], -1, error); //TODO calculate if correct
+    BOOST_CHECK_CLOSE(mi->calculateSpring()[1], -1, error);//TODO calculate if correct
+    BOOST_CHECK_CLOSE(mi->calculateSpring()[2], -11, error); //TODO calculate if correct
+}
 
+
+BOOST_AUTO_TEST_CASE(testMovingImageCorrectTotalForce)
+{
+
+    double z = Plane::getInstance()->getPointXY(3, 3)->getZ();
+    double z_next = Plane::getInstance()->getPointXY(4, 4)->getZ();
+    double z_prev = Plane::getInstance()->getPointXY(1, 1)->getZ(); 
+    MovingImage *mi = new MovingImage(3, 3, z);
+    MovingImage *mi_next = new MovingImage(4, 4, z_next);
+    MovingImage *mi_prev = new MovingImage(1, 1, z_prev);
+    mi->setNext(mi_next);
+    mi->setPrevious(mi_prev);
+    double error = 1; //percent of error TODO check values
+    Eigen::Vector3d temp = mi->iterate();
+    BOOST_CHECK_CLOSE(temp[0], -0.09, error); //TODO calculate if correct
+    BOOST_CHECK_CLOSE(temp[1], 8.91, error);//TODO calculate if correct
+    BOOST_CHECK_CLOSE(temp[2], -12, error); //TODO calculate if correct
+}
 
 
 BOOST_AUTO_TEST_CASE(testChain1) {

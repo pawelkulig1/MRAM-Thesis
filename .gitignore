@@ -118,6 +118,9 @@ GPATH
 GTAGS
 GRTAGS
 *DS_Store
-tests/test.o*
+#tests/test.o
+Core/tests/test.o.dSYM/Contents/Info.plist
+Core/main.o.dSYM/Contents/Info.plist
 main.o*
 C++_core/*
+*/.vscode

@@ -15,14 +15,14 @@ namespace GNEB
 	{
 		static Chain *instance;
 		Chain(){};
-		std::deque<Point> chain;
+		std::deque<MovingImage> chain;
         StationaryImage	*first, *last;
 		//Point *first, *last;
 	public:
 		static Chain *getInstance();
 		Point getPoint(unsigned int number);
-		std::deque<Point>::iterator begin();
-		std::deque<Point>::iterator end();
+		std::deque<MovingImage>::iterator begin();
+		std::deque<MovingImage>::iterator end();
 		void addToChain(MovingImage p);
 		void addToChain(MovingImage *p);
         void setFirst(StationaryImage *p);

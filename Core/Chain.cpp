@@ -31,7 +31,7 @@ void Chain::addToChain(MovingImage p)
     TempPoint = plane->getPointXY(p.getX(), p.getY() + plane->getDy());
     
     p.setY_h(TempPoint);
-/*    if(chain.size() == 0)
+    if(chain.size() == 0)
     {
         p.setPrevious(first);
     }
@@ -40,7 +40,7 @@ void Chain::addToChain(MovingImage p)
     {
         chain[chain.size() - 1].setNext(&p);
         p.setPrevious(&chain[chain.size() - 1]);
-    }*/
+    }
 
     TempPoint = plane->getPointXY(p.getX(), p.getY());
     p.setX(TempPoint->getX());
@@ -65,16 +65,16 @@ void Chain::addToChain(MovingImage *p)
     TempPoint = plane->getPointXY(p->getX(), p->getY() + plane->getDy());
     
     p->setY_h(TempPoint);
-    /*if(chain.size() == 0)
+    if(chain.size() == 0)
     {
         p->setPrevious(first);
     }
 
     if(chain.size() > 0)
     {
-        //chain[chain.size() - 1].setNext(p);
-        //p->setPrevious(&(chain[chain.size() - 1]));
-    }*/
+        chain[chain.size() - 1].setNext(p);
+        p->setPrevious(&(chain[chain.size() - 1]));
+    }
 
     TempPoint = plane->getPointXY(p->getX(), p->getY());
     p->setX(TempPoint->getX());
@@ -86,12 +86,12 @@ void Chain::addToChain(MovingImage *p)
 	recalculateChain();
 }
 
-std::deque<Point>::iterator Chain::begin()
+std::deque<MovingImage>::iterator Chain::begin()
 {
 	return chain.begin();
 }
 
-std::deque<Point>::iterator Chain::end()
+std::deque<MovingImage>::iterator Chain::end()
 {
 	return chain.end();
 }
@@ -139,7 +139,7 @@ void Chain::calculateInterpolation(int Q)
         std::cout<<temp[0]<<" "<<temp[1]<<" "<<temp[2]<<std::endl;
 		addToChain(new MovingImage(temp[0], temp[1], temp[2]));
 	}
-    //chain[chain.size() - 1].setNext(last);
+    chain[chain.size() - 1].setNext(last);
 
 	recalculateChain();
 }

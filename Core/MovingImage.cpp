@@ -13,6 +13,7 @@ MovingImage::MovingImage(double x, double y, double z): Point(x, y, z)
     y_h = plane->getPointXY(x, y + dy);
     next = nullptr;
     previous = nullptr;    
+    tau = Eigen::Vector3d(0,0,0);
 }
 
 Eigen::Vector3d MovingImage::calculateDerivative()
@@ -56,6 +57,8 @@ Eigen::Vector3d MovingImage::calculateSpring()
     {
         std::cout<<x<<" "<<y<<" "<<"Cannot calculate spring force! next"<<std::endl;
     }
+    if(tau == Eigen::Vector3d(0,0,0))
+        calculateTangent();
     spring = kappa * ((next->getVector() - getVector()).norm() - (getVector() - previous->getVector()).norm()) * tau;
     return spring;
 }
@@ -71,7 +74,8 @@ Eigen::Vector3d MovingImage::iterate()
     calculateTangent();
     calculateSpring();
     calculateTotalForce();
-    moveByVector(NEBForce);
+    //moveByVector(NEBForce);
+    return NEBForce;
 }
 
 void MovingImage::moveToCords(double x, double y)
@@ -82,7 +86,7 @@ void MovingImage::moveToCords(double x, double y)
 	this->z = p->getZ();
 }
 
-void MovingImage::moveByVector(Eigen::Vector3d v)
+void MovingImage::moveByVector(const Eigen::Vector3d v)
 {
     //double t_x = x + v[0];
     //double t_y = y + v[1];
