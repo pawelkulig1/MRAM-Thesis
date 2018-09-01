@@ -133,26 +133,131 @@ BOOST_AUTO_TEST_CASE(testMovingImageCorrectTotalForce)
 
 
 BOOST_AUTO_TEST_CASE(testChain1) {
-   Chain *c = Chain::getInstance();
-   Parser::PlainDataParser *parser = new Parser::PlainDataParser("tests/data.dat");
-   Plane *plane = Plane::getInstance();
-   plane->initializeWithParser(parser);
-
-   c->setFirst(plane->getPointXY(8, 1));
-   c->setLast(plane->getPointXY(8, 8));
+    Chain *c = Chain::getInstance();
+    Parser::PlainDataParser *parser = new Parser::PlainDataParser("tests/data.dat");
+    Plane *plane = Plane::getInstance();
+    plane->initializeWithParser(parser);
+    
+    c->setFirst(plane->getPointXY(2, 2));
+    c->setLast(plane->getPointXY(8, 8));
    
-   BOOST_CHECK_EQUAL(c->getFirst()->getX(), 8);
-   BOOST_CHECK_EQUAL(c->getFirst()->getY(), 1);
-   BOOST_CHECK_EQUAL(c->getLast()->getX(), 8);
-   BOOST_CHECK_EQUAL(c->getLast()->getY(), 8);
+    BOOST_CHECK_EQUAL(c->getFirst()->getX(), 2);
+    BOOST_CHECK_EQUAL(c->getFirst()->getY(), 2);
+    BOOST_CHECK_EQUAL(c->getLast()->getX(), 8);
+    BOOST_CHECK_EQUAL(c->getLast()->getY(), 8);
 
-   delete parser;
+    delete parser;
 }
 
-BOOST_AUTO_TEST_CASE(test6)
+BOOST_AUTO_TEST_CASE(testChainInterpolation)
 {
-    std::cout;
+    Chain *c = Chain::getInstance();
+    Parser::PlainDataParser *parser = new Parser::PlainDataParser("tests/data.dat");
+    Plane *plane = Plane::getInstance();
+    plane->initializeWithParser(parser);
+
+    c->setFirst(plane->getPointXY(8, 1));
+    c->setLast(plane->getPointXY(8, 8));
+   
+    c->calculateInterpolation(6);
+    
+
+    auto it = c->begin();
+    auto temp = plane->getPointXY(8, 2);
+    BOOST_CHECK_EQUAL(it++->getVector(), temp->getVector());
+    
+    temp = plane->getPointXY(8, 3);
+    BOOST_CHECK_EQUAL(it++->getVector(), temp->getVector());
+
+    temp = plane->getPointXY(8, 4);
+    BOOST_CHECK_EQUAL(it++->getVector(), temp->getVector());
+
+    temp = plane->getPointXY(8, 5);
+    BOOST_CHECK_EQUAL(it++->getVector(), temp->getVector());
+
+    temp = plane->getPointXY(8, 6);
+    BOOST_CHECK_EQUAL(it++->getVector(), temp->getVector());
+
+    temp = plane->getPointXY(8, 7);
+    BOOST_CHECK_EQUAL(it++->getVector(), temp->getVector());
+
+    delete parser;
+}
+
+BOOST_AUTO_TEST_CASE(testChainNextAndPrevious)
+{
+    int SIZE = 24;
+    double startX = 8;
+    double startY = 1;
+    double endX = 2;
+    double endY = 1;
+
+    Chain *c = Chain::getInstance();
+    Parser::PlainDataParser *parser = new Parser::PlainDataParser("tests/data.dat");
+    Plane *plane = Plane::getInstance();
+    plane->initializeWithParser(parser);
+
+    c->setFirst(plane->getPointXY(startX, startY));
+    c->setLast(plane->getPointXY(endX, endY));
+   
+    c->calculateInterpolation(SIZE);
+
+    auto it = c->begin();
+    auto it_next = it + 1;
+
+    c->getFirst()->print();
+    for(auto it2 = c->begin();it2<c->end();it2++)
+        it2->print();
+    c->getLast()->print();
+    
+    
+    BOOST_CHECK_EQUAL(it->previous->getVector(), c->getFirst()->getVector());
+    BOOST_CHECK_EQUAL(it++->next->getVector(), it_next++->getVector());
+    
+    auto it_prev = c->begin();
+    for(int i=0;i<SIZE-2;i++)
+    {
+        BOOST_CHECK_EQUAL(it->previous->getVector(), it_prev++->getVector());
+        BOOST_CHECK_EQUAL(it++->next->getVector(), it_next++->getVector());
+    }
+
+    BOOST_CHECK_EQUAL(it->previous->getVector(), it_prev++->getVector());
+    BOOST_CHECK_EQUAL(it->next->getVector(), c->getLast()->getVector());
+
+    delete parser;
 }
 
 
-//}
+
+BOOST_AUTO_TEST_CASE(testChainXhAndYh)
+{
+    int SIZE = 24;
+    double startX = 8;
+    double startY = 1;
+    double endX = 5;
+    double endY = 5;
+    Chain *c = Chain::getInstance();
+    Parser::PlainDataParser *parser = new Parser::PlainDataParser("tests/data.dat");
+    Plane *plane = Plane::getInstance();
+    plane->initializeWithParser(parser);
+
+    c->setFirst(plane->getPointXY(startX, startY));
+    c->setLast(plane->getPointXY(endX, endY));
+   
+    c->calculateInterpolation(SIZE);
+    auto it = c->begin();
+
+    Point *tempX_h;
+    Point *tempY_h;
+
+    for(int i=0;i<SIZE-2;i++)
+    {
+        tempX_h = plane->getPointXY(it->getX() + 1, it->getY());
+        tempY_h = plane->getPointXY(it->getX(), it->getY() + 1);
+        BOOST_CHECK(*(it->x_h) == *(tempX_h));
+        BOOST_CHECK(*(it++->y_h) == *(tempY_h));
+    }
+
+    delete parser;
+}
+

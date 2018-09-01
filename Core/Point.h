@@ -29,6 +29,8 @@ namespace GNEB
         //void setY_h(Point *p);
 
         Eigen::Vector3d getVector();
+        bool operator==(Point p);
+        bool operator==(Point *p);
 //		friend std::ostream& operator<<(std::ostream& os, Point *p);
     };
 }

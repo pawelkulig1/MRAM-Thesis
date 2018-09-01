@@ -46,15 +46,12 @@ void Chain::addToChain(MovingImage p)
     p.setX(TempPoint->getX());
     p.setY(TempPoint->getY());
     p.setZ(TempPoint->getZ());
-    //std::cout<<&p<<std::endl;
 	chain.push_back(p);
-	recalculateChain();
 }
 
 void Chain::addToChain(MovingImage *p)
 {
 
-    std::cout<<"pointer to p: "<<p<<std::endl;
     Point *TempPoint;
     Plane *plane = Plane::getInstance();
 
@@ -81,9 +78,7 @@ void Chain::addToChain(MovingImage *p)
     p->setY(TempPoint->getY());
     p->setZ(TempPoint->getZ());
 
-    std::cout<<"pointer before chain size > 0: "<<p<<std::endl;
 	chain.push_back(*p);
-	recalculateChain();
 }
 
 std::deque<MovingImage>::iterator Chain::begin()
@@ -116,6 +111,23 @@ void Chain::setLast(Point *p)
 	this->last = static_cast<StationaryImage *>(p);
 }
 
+void Chain::checkFirstAndLast()
+{
+    if(first == nullptr || last == nullptr)
+    {
+        return;
+    }
+
+    StationaryImage *temp = nullptr;
+    if(last->getX() < first->getX() || last->getY() < first->getY())
+    {
+        temp = first;
+        first = last;
+        last = temp;
+    }
+    temp = nullptr;
+}
+
 StationaryImage *Chain::getFirst()
 {
     return first;
@@ -127,30 +139,18 @@ StationaryImage *Chain::getLast()
 }
 
 
-void Chain::calculateInterpolation(int Q)
+void Chain::calculateInterpolation(const int Q)
 {
+    chain.erase(chain.begin(), chain.end());
 	Eigen::Vector3d R1 = Eigen::Vector3d(first->getVector());
 	Eigen::Vector3d RQ = Eigen::Vector3d(last->getVector());
-    std::cout<<R1<<" "<<RQ<<std::endl;
 	Eigen::Vector3d temp;
 	for(int v=1;v<Q+1;v++)
 	{
 		temp = R1 + v * (RQ - R1) / (Q+1);
-        std::cout<<temp[0]<<" "<<temp[1]<<" "<<temp[2]<<std::endl;
 		addToChain(new MovingImage(temp[0], temp[1], temp[2]));
 	}
     chain[chain.size() - 1].setNext(last);
 
-	recalculateChain();
 }
 
-
-void Chain::recalculateChain()
-{
-		std::sort(chain.begin(), chain.end(), [](Point p1, Point p2){
-						if(p1.getX() < p2.getX() || p1.getY() < p2.getY())
-							return true;
-						else
-							return false;
-						});
-}

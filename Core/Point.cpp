@@ -49,6 +49,24 @@ Eigen::Vector3d Point::getVector()
     return Eigen::Vector3d(x,y,z);
 }
 
+bool Point::operator==(Point p)
+{
+    if(x == p.getX() && 
+       y == p.getY() &&
+       z == p.getZ())
+        return true;
+    return false;
+}
+
+bool Point::operator==(Point *p)
+{
+    if(x == p->getX() && 
+       y == p->getY() &&
+       z == p->getZ())
+        return true;
+    return false;
+}
+
 void Point::print()
 {
 	/*std::cout << "[" + boost::lexical_cast<std::string>(x) + ", "

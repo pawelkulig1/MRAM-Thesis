@@ -16,8 +16,8 @@ namespace GNEB
 		static Chain *instance;
 		Chain(){};
 		std::deque<MovingImage> chain;
-        StationaryImage	*first, *last;
 		//Point *first, *last;
+        StationaryImage	*first, *last;
 	public:
 		static Chain *getInstance();
 		Point getPoint(unsigned int number);
@@ -29,12 +29,12 @@ namespace GNEB
 		void setFirst(Point *p);
    		void setLast(StationaryImage *p);
 		void setLast(Point *p);
-		void calculateInterpolation(int Q);
+        void checkFirstAndLast();
+		void calculateInterpolation(const int Q);
         StationaryImage *getFirst();
         StationaryImage *getLast();
 		//calculate interpolation of initial path
 
-		void recalculateChain(); 
 		//makes sure points are in order to keep calculation time lower first, we sort by x then by y coordinate. x1<x2 or y1<y2 => P1 < P2
 	};
 }
