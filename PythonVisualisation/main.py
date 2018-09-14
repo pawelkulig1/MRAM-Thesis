@@ -1,95 +1,134 @@
-import numpy as np
-import matplotlib.pyplot as plt
+# import sys
+
+# size = int(sys.argv[1])
+
+chains = []
+chain = []
+
+x = True
+
+# print(size)
+
+def parseVector(vector):
+	vector = vector[1:-1]
+	vector = vector.split(",")
+	tempVec = []
+	print(vector)
+	for i in range(2):
+		try:
+			tempVec.append(float(vector[i]))
+		except:
+			print("cannot parse: ", vector)
+	return tempVec
+
+def getXYArray(arr, poz=0):
+	print("ARR:", arr)
+	if len(arr[0]) == 1 and poz != 0:
+		return 0, 0
+	X = []
+	Y = []
+	for el in arr:
+		X.append(el[poz][0])
+		Y.append(el[poz][1])
+
+	return X, Y	
 
 
-#3D plot
-from mpl_toolkits.mplot3d import Axes3D 
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
+#read data from named pipe
 
-from data import *
+def readFromPipe(name):
+	f = open(name, "r")
+	data = f.read()
+	f.close()
+	if len(data) == 0:
+		return False
+	return data
 
+x = True
+data = []
+for i in range(10):
+	x = readFromPipe("plotFIFO")
 
+	# print("' ", x, "'")
+	if x == ";|;|;|" or x == False:
+		break
+	data.append(x)
 
-X = np.arange(-10, 10, 0.25)
-Y = np.arange(-10, 10, 0.25)
-Z = np.zeros((len(X), len(Y)))
+print("data[1]:", data[1])
 
-# Gaussian = Gaussian3D(1, 1, 45, 45)
-# print(Gaussian.cords.getCartesian())
-# Z = Gaussian.getGaussianData()
-for i, line in enumerate(data):
+def parseCords(cords):
+	cords = cords.split(",")
+	return float(cords[0]), float(cords[1])
 
-# Gaussian = Gaussian3D(-2.500, 0.200, 0.600, 3.700)
-	Gaussian = Gaussian3D(line[1], line[2], line[3], line[4], 5, 0.25)
-	# print(Gaussian1.cords.getCartesian())
-	Z += Gaussian.getGaussianData()
-
-# print(Z)
-
-
-#PLOTING
-
-
-
-X, Y = np.meshgrid(X, Y)
-
-plt.subplot(211)
-plt.contour(X, Y, Z, cmap=cm.RdYlGn_r)
-plt.subplot(212)
-plt.contourf(X, Y, Z, cmap=cm.RdYlGn_r)
-
-# plt.clabel(CS, inline=1, fontsize=10)
-# fig = plt.figure()
-
-# ax = fig.gca(projection='3d')
-# surf = ax.plot_surface(X, Y, Z, cmap=cm.RdYlGn_r,
-	                       # linewidth=0, antialiased=False)
-
-# Customize the z axis.
-# ax.set_zlim(-1.01, 1.01)
-# ax.zaxis.set_major_locator(LinearLocator(10))
-# ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-
-# Add a color bar which maps values to colors.
-# fig.colorbar(surf, shrink=0.5, aspect=5)
-
-plt.show()
+def parseToDict(one):
+	temp = one.split(":")
+	try:
+		return temp[0], temp[1]
+	except:
+		print("exception: ", one)
 
 
-def gaussianFunction(x, amplitude, width, b, c):
-	#b - moves function along x axis
-	#c - move function along y axis
-	if width==0:
-		raise ZeroDivision("Error")
-	return amplitude * mt.exp( -((x - b)**2) / (2 * width**2)) + c
+for i, e in enumerate(data):
+	tempData = e.split(";")
+	Points = []
+	# print(tempData)
+	for el in tempData:
+		if el == "|":
+			continue
+		key, val = parseToDict(el)
+		if key == "coords":
+			Points.append([parseCords(val)])
+		if key == "deriv":
+			Points[-1].append([parseCords(val)])
+		if key == "spring":
+			Points[-1].append([parseCords(val)])
 
-def drawGaussian2D():
-	xvalues = np.linspace(-5, 5, 100)
-	yvalues = []
-	for x in xvalues:
-		yvalues.append(gaussianFunction(x, 1, 2, 0, 0))
 
-	plt.plot(xvalues, yvalues)
+	import numpy as np
+	import matplotlib
+	matplotlib.use("MacOSX")
+	import matplotlib.pyplot as plt
+	import matplotlib.contour as cont
+	import matplotlib.cm as cm
+	from data import *
+	import time as tm
+
+	# ['GTK', 'GTKAgg', 'GTKCairo', 'MacOSX', 'Qt4Agg', 'Qt5Agg', 'TkAgg', 'WX', 'WXAgg', 'GTK3Cairo', 'GTK3Agg', 'WebAgg', 'nbAgg', 'agg', 'cairo', 'gdk', 'pdf', 'pgf', 'ps', 'svg', 'template']
+
+	X = np.arange(-5, 5, 0.1)
+	Y = np.arange(-5, 5, 0.1)
+	Z = np.zeros((len(X), len(Y)))
+
+	for i, line in enumerate(data):
+		Gaussian = Gaussian3D(line[1], line[2], line[3], line[4], 10, 0.1)
+		Z += Gaussian.getGaussianData()
+
+	X, Y = np.meshgrid(X, Y)
+
+
+	
+	# plt.subplot(311)
+	plt.contourf(X, Y, Z, cmap=cm.RdYlGn_r)
+	# plt.quiver(0,0,0, 5,5,0, scale = 1)
+	# colors = iter(cm.rainbow(np.linspace(0, 1, 8)))
+	# print(Points[i][0])
+	plt.scatter(*getXYArray(Points), color="r")
+	plt.xlim(-5, 5)
+
+	# plt.subplot(312)
+	# plt.title("deriv")
+	# plt.contourf(X, Y, Z, cmap=cm.RdYlGn_r)
+	# # plt.scatter(*getXYArray(Points), color="r")
+	# # plt.quiver(*getXYArray(Points),0, *getXYArray(Points, 1),0, scale = 1)
+	# print("second plot: ", Points[1:-1], Points)
+	# plt.quiver(*getXYArray(Points[1:-1]), *getXYArray(Points[1:-1], 1), units="xy")
+	# plt.xlim(-5, 5)	
+	# plt.ylim(-5, 5)	
+
+	# plt.subplot(313)
+	# plt.title("spring force")
+	# plt.contourf(X, Y, Z, cmap=cm.RdYlGn_r)
+	# plt.scatter(*getXYArray(Points), color="r")
+	# plt.xlim(-5, 5)	
+	
 	plt.show()
-
-def drawGaussian3D():
-	pass
-
-	# # Make data.
-	# X2 = np.arange(-5, 5, 0.25)
-	# Y2 = np.arange(-5, 5, 0.25)
-	# X, Y = np.meshgrid(X2, Y2)
-
-	# R = np.sqrt(X**2 + Y**2)
-	# Z = []
-	# i = 0
-	# for x in X2:
-	# 	Z.append([])
-	# 	for y in Y2:
-	# 		Z[i].append(gaussianFunction3D(x, y, 1, 1))
-	# 	i+=1
-
-	# Z = np.array(Z)
-
-	# Plot the surface.
