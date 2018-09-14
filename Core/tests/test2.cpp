@@ -74,8 +74,37 @@ BOOST_AUTO_TEST_CASE(testMovingImageCorrect)
 
 BOOST_AUTO_TEST_CASE(testMovingImageCorrectDerivative)
 {
-    MovingImage *mi = new MovingImage(1, 1, 1);
-    BOOST_CHECK_EQUAL(mi->calculateDerivative(), Eigen::Vector3d(12, 21, 0));
+    auto plane = Plane::getInstance();
+    auto point = plane->getPointXY(1,1);
+    double z = point->getZ();
+
+    MovingImage *mi = new MovingImage(1, 1, z);
+
+    mi->print();
+    double error = 1;
+    BOOST_CHECK_CLOSE(mi->calculateDerivative()[0], 1, error); 
+    BOOST_CHECK_CLOSE(mi->calculateDerivative()[1], 10, error); 
+    BOOST_CHECK_CLOSE(mi->calculateDerivative()[2], 0, error); 
+}
+
+BOOST_AUTO_TEST_CASE(testMovingImageCorrectTau)
+{
+    double z = Plane::getInstance()->getPointXY(2, 2)->getZ();
+    double z_next = Plane::getInstance()->getPointXY(2, 3)->getZ();
+    double z_prev = Plane::getInstance()->getPointXY(2, 1)->getZ();
+
+    
+    MovingImage *mi = new MovingImage(2, 2, z);
+    MovingImage *mi_next = new MovingImage(2, 3, z_next);
+    MovingImage *mi_prev = new MovingImage(2, 1, z_prev);
+    
+    mi->setNext(mi_next);
+    mi->setPrevious(mi_prev);
+    double error = 10; //percent of error TODO check values
+
+    BOOST_CHECK_CLOSE(mi->calculateTau()[0], 0, error); //TODO calculate if correct
+    BOOST_CHECK_CLOSE(mi->calculateTau()[1], 0.1, error);//TODO calculate if correct
+    BOOST_CHECK_CLOSE(mi->calculateTau()[2], 1, error); //TODO calculate if correct
 }
 
 BOOST_AUTO_TEST_CASE(testMovingImageCorrectTangent)
@@ -83,18 +112,20 @@ BOOST_AUTO_TEST_CASE(testMovingImageCorrectTangent)
     double z = Plane::getInstance()->getPointXY(2, 2)->getZ();
     double z_next = Plane::getInstance()->getPointXY(2, 3)->getZ();
     double z_prev = Plane::getInstance()->getPointXY(2, 1)->getZ();
+
     
     MovingImage *mi = new MovingImage(2, 2, z);
     MovingImage *mi_next = new MovingImage(2, 3, z_next);
     MovingImage *mi_prev = new MovingImage(2, 1, z_prev);
+    
     mi->setNext(mi_next);
     mi->setPrevious(mi_prev);
     double error = 10; //percent of error TODO check values
-    BOOST_CHECK_CLOSE(mi->calculateTangent()[0], 1, error); //TODO calculate if correct
-    BOOST_CHECK_CLOSE(mi->calculateTangent()[1], 10, error);//TODO calculate if correct
-    BOOST_CHECK_CLOSE(mi->calculateTangent()[2], -1, error); //TODO calculate if correct
-}
 
+    BOOST_CHECK_CLOSE(mi->calculateTangent()[0], -1, error); //TODO calculate if correct
+    BOOST_CHECK_CLOSE(mi->calculateTangent()[1], -9.9, error);//TODO calculate if correct
+    BOOST_CHECK_CLOSE(mi->calculateTangent()[2], 1, error); //TODO calculate if correct
+}
 
 BOOST_AUTO_TEST_CASE(testMovingImageCorrectSpring)
 {
@@ -104,8 +135,12 @@ BOOST_AUTO_TEST_CASE(testMovingImageCorrectSpring)
     MovingImage *mi = new MovingImage(3, 3, z);
     MovingImage *mi_next = new MovingImage(4, 4, z_next);
     MovingImage *mi_prev = new MovingImage(1, 1, z_prev);
+    mi->print();
+    mi_next->print();
+    mi_prev->print();
     mi->setNext(mi_next);
     mi->setPrevious(mi_prev);
+    std::cout<<mi->calculateTau()<<std::endl;
     double error = 1; //percent of error TODO check values
     BOOST_CHECK_CLOSE(mi->calculateSpring()[0], -1, error); //TODO calculate if correct
     BOOST_CHECK_CLOSE(mi->calculateSpring()[1], -1, error);//TODO calculate if correct
@@ -260,4 +295,6 @@ BOOST_AUTO_TEST_CASE(testChainXhAndYh)
 
     delete parser;
 }
+
+//TODO test chain bad data
 

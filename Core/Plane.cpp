@@ -1,4 +1,5 @@
 #include "Plane.h"
+#include "defines.h"
 
 using namespace GNEB;
 
@@ -90,8 +91,8 @@ std::deque<std::deque<Point>> Plane::getPoints()
 Point *Plane::getPointXY(double x, double y)
 {
     int n, m;
-    n = round((x + xpos)/dx);
-    m = round((y + ypos)/dy);
+    n = round((x - xpos)/dx);
+    m = round((y - ypos)/dy);
     return Plane::getPointNM(n, m);
 }
 
@@ -99,9 +100,16 @@ Point *Plane::getPointNM(int x, int y)
 {
 	if(x > xnum-1 || y > ynum-1 || x<0 || y<0)
 	{
-		std::cout<<"bad x or y value in getPointNM! "<<x<<" "<<y<<" "<<xnum<<" "<<ynum<<std::endl;
-        return nullptr; 
+        std::cout<<"bad x or y value in getPointNM! "<<x<<" "<<y<<" "<<xnum<<" "<<ynum<<std::endl;
 	}	
+    if(x > xnum - 1)
+        x = xnum - 1;
+    if(y > ynum - 1)
+        y = ynum - 1;
+    if(x < 0)
+        x = 0;
+    if(y < 0)
+        y = 0;
     return &points[y][x];//not sure if I can do smth about that
     //this is caused by input file format and parser, we parse symbol after symbol and they go first n 
     //symbols has coordinates with increasing x so [0...n][0], but array in goes like this [col][row] 

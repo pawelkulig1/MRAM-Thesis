@@ -15,6 +15,10 @@ void PlainDataParser::incrementer(int &poz1, int &poz2, std::string &temp)
 
 bool PlainDataParser::parseConfig()
 {
+    ysize = 0;
+    xsize = 0;
+    dx = 0;
+    dy = 0;
 	handle.open(confname, std::ios::in);
 	if(!handle.good())
 	{	
@@ -30,13 +34,18 @@ bool PlainDataParser::parseConfig()
 	int poz2 = temp.find(",", poz1+1);
 	ysize = std::stoi(temp.substr(poz1+1, poz2));
 	incrementer(poz1, poz2, temp);
-	dx = std::stoi(temp.substr(poz1+1, poz2))/xsize;
+	dx = std::stod(temp.substr(poz1+1, poz2))/xsize;
 	incrementer(poz1, poz2, temp);
-	dy = std::stoi(temp.substr(poz1+1, poz2))/ysize;
+	dy = std::stod(temp.substr(poz1+1, poz2))/ysize;
 	incrementer(poz1, poz2, temp);
-	xpos = std::stoi(temp.substr(poz1+1, poz2));
+	xpos = std::stod(temp.substr(poz1+1, poz2));
 	incrementer(poz1, poz2, temp);
-	ypos = std::stoi(temp.substr(poz1+1, poz2));
+	ypos = std::stod(temp.substr(poz1+1, poz2));
+
+    if(!xsize || !ysize || !dx || !dy)
+    {
+        return false;
+    }
     return true;
 
 }
@@ -44,12 +53,16 @@ bool PlainDataParser::parseConfig()
 void PlainDataParser::parse(std::deque<std::deque<Point>> *data)
 {
     if(!parseConfig())
+    {
+        std::cout<<"Config fille cannot be parsed!"<<std::endl;
         throw("Config fille cannot be parsed!");
+    }
 	handle.open(filename, std::ios::in);
 	std::string temp;
 	if(!handle.good())
 	{
 		std::cout<<"PlainDataParser::parse() Unable to open file"<<std::endl;
+        throw("Unable to open file!");
 	}
 
    	handle >> temp;

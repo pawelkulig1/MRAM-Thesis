@@ -9,7 +9,7 @@ namespace GNEB
 {
 	class MovingImage : public Point
 	{
-		double kappa; // kappa is spring constant
+		double kappa, maxJumpDx, maxJumpDy; // kappa is spring constant
         Eigen::Vector3d tau;
 		Eigen::Vector3d dE;
 		Eigen::Vector3d spring;
@@ -18,6 +18,8 @@ namespace GNEB
     public:
 		Eigen::Vector3d calculateDerivative();
         Eigen::Vector3d calculateTangent();
+        Eigen::Vector3d calculateUpgradedTangent();
+        Eigen::Vector3d calculatePerpendicularComponent();
         Eigen::Vector3d calculateSpring();
         Eigen::Vector3d calculateTotalForce();
 
@@ -26,8 +28,11 @@ namespace GNEB
 
 		MovingImage(double x, double y, double z);
         Eigen::Vector3d iterate();
+        Point *findXhPoint();
+        Point *findYhPoint();
 		void moveToCords(double x, double y);
 		void moveByVector(const Eigen::Vector3d);
+        void moveByTotalForce();
 		void setX_h(Point *p);
 		void setY_h(Point *p);
         void getX_h();
@@ -35,6 +40,7 @@ namespace GNEB
         void setNext(Point *p);
         void setPrevious(Point *p);
         void print() override ;
+        std::string stringify();
 	};
 }
 

@@ -4,7 +4,9 @@ FILES=  Point.o\
 	    Plane.o             \
 	    PlainDataParser.o \
 	    StationaryImage.o   \
-		MovingImage.o       
+		MovingImage.o       \
+		ChainSaver.o		\
+		Pipe.o
 
 
 FLAGS= --std=c++17
@@ -14,10 +16,10 @@ OUT= main.o
 TEST_FLAGS= --std=c++17 -lboost_unit_test_framework
 
 
-main.o: $(FILES) main.cpp 
+main: $(FILES) main.cpp 
 	$(CXX) -o main.o main.cpp $(FILES) $(LIBS) $(FLAGS)
 
-test: main.o tests/test2.cpp
+test: main.o tests/test2.cpp $(FILES)
 	$(CXX) -o tests/test.o tests/test2.cpp $(FILES) $(TEST_FLAGS) $(LIBS)
 	./tests/test.o
 
@@ -46,15 +48,11 @@ Plane.o: Plane.h Plane.cpp
 PlainDataParser.o: Parsers/PlainDataParser.h Parsers/PlainDataParser.cpp
 	$(CXX) -c Parsers/PlainDataParser.cpp $(LIBS) $(FLAGS)
 
+ChainSaver.o: ChainSaver.h ChainSaver.cpp
+	$(CXX) -c ChainSaver.cpp $(LIBS) $(FLAGS)
 
-
-
-#run:
-#	$(CXX) $(FILES) $(LIBS) -o $(OUT) $(FLAGS)
-#	./$(OUT)
-
-#all:
-#	$(CXX) $(FILES) $(LIBS) -o $(OUT) $(FLAGS)
+Pipe.o: Pipe.h Pipe.cpp
+	$(CXX) -c Pipe.cpp $(LIBS) $(FLAGS)
 
 clean:
 	rm *.o

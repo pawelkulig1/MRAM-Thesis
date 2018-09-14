@@ -76,6 +76,13 @@ void Point::print()
 	
 }
 
+std::string Point::stringify()
+{
+    std::string ret = "";
+    ret += "coords:" + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + ";";
+    return ret;
+}
+
 
 /*std::ostream& operator<<(std::ostream& os, Point *p)
 {

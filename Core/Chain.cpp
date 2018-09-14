@@ -154,3 +154,37 @@ void Chain::calculateInterpolation(const int Q)
 
 }
 
+int Chain::size()
+{
+    return this->chain.size();
+}
+
+void Chain::print()
+{
+    first->print();
+    //std::cout<<"["<<first->getX()<<", "<<first->getY()<<", "<<first->getZ()<<"]"<<std::endl;
+    //for_each(chain.begin(), chain.end(), [](MovingImage m){
+    //    std::cout<<"["<<m.getX()<<", "<<m.getY()<<", "<<m.getZ()<<"]"<<std::endl;
+    //});
+
+    for(int i=0;i<chain.size();i++)
+    {
+        std::cout<<"["<<chain[i].getX()<<", "<<chain[i].getY()<<", "<<chain[i].getZ()<<"]"<<std::endl;
+    }
+    last->print();
+    //std::cout<<"["<<getX()<<", "<<getY()<<", "<<getZ()<<"]"<<std::endl;
+}
+
+std::string Chain::stringify()
+{
+    std::string ret = "";
+    ret += first->stringify();
+    for(int i=0;i<chain.size();i++)
+    {
+        ret += chain[i].stringify();
+    }
+    ret += last->stringify();
+    ret += "|";
+    return ret;
+
+}

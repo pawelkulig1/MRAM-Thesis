@@ -23,6 +23,7 @@ namespace GNEB
         virtual void setY(double y);
         virtual void setZ(double z);
         virtual void print();
+        virtual std::string stringify();
 
         //
         //void setX_h(Point *p);
