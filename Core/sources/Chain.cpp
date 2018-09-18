@@ -1,4 +1,7 @@
 #include "Chain.h"
+#include "StationaryImage.h"
+#include "Point.h"
+#include "PlaneStrategy.h"
 
 using namespace GNEB;
 
@@ -18,65 +21,22 @@ Point Chain::getPoint(unsigned int number)
 	return chain[number];
 }
 
-void Chain::addToChain(MovingImage p)
-{
-    //TODO here we may go outside of Plane and add point that doesn't exist. Need to check that. not sure now
-    Point *TempPoint;
-    Plane *plane = Plane::getInstance();
-
-    TempPoint = plane->getPointXY(p.getX() + plane->getDx(), p.getY());
-
-	p.setX_h(TempPoint);
-
-    TempPoint = plane->getPointXY(p.getX(), p.getY() + plane->getDy());
-    
-    p.setY_h(TempPoint);
-    if(chain.size() == 0)
-    {
-        p.setPrevious(first);
-    }
-
-    if(chain.size() > 0)
-    {
-        chain[chain.size() - 1].setNext(&p);
-        p.setPrevious(&chain[chain.size() - 1]);
-    }
-
-    TempPoint = plane->getPointXY(p.getX(), p.getY());
-    p.setX(TempPoint->getX());
-    p.setY(TempPoint->getY());
-    p.setZ(TempPoint->getZ());
-	chain.push_back(p);
-}
-
 void Chain::addToChain(MovingImage *p)
 {
+    auto *plane = PlaneStrategy::getInstance();
+    auto TempPoint = plane->getClosestPoint(p->getX(), p->getY());
 
-    Point *TempPoint;
-    Plane *plane = Plane::getInstance();
-
-    TempPoint = plane->getPointXY(p->getX() + plane->getDx(), p->getY());
-
-	p->setX_h(TempPoint);
-
-    TempPoint = plane->getPointXY(p->getX(), p->getY() + plane->getDy());
-    
-    p->setY_h(TempPoint);
-    if(chain.size() == 0)
-    {
-        p->setPrevious(first);
-    }
-
-    if(chain.size() > 0)
-    {
-        chain[chain.size() - 1].setNext(p);
-        p->setPrevious(&(chain[chain.size() - 1]));
-    }
-
-    TempPoint = plane->getPointXY(p->getX(), p->getY());
     p->setX(TempPoint->getX());
     p->setY(TempPoint->getY());
     p->setZ(TempPoint->getZ());
+    if(chain.size() == 0)
+        p->setPrevious(static_cast<Point *> (first));
+    else
+    {
+        p->setPrevious(static_cast<Point *>(&chain[chain.size()-1]));
+        chain[chain.size()-1].setNext(p);   
+    }
+    p->setNext(static_cast<Point *>(last));
 
 	chain.push_back(*p);
 }
@@ -93,22 +53,30 @@ std::deque<MovingImage>::iterator Chain::end()
 
 void Chain::setFirst(StationaryImage *p)
 {
-    this->first = p;
+    auto plane = PlaneStrategy::getInstance();
+    auto point = plane->getClosestPoint(static_cast<Point *>(p));
+    this->first = static_cast<StationaryImage *>(point);
 }
 
 void Chain::setFirst(Point *p)
 {
-    this->first = static_cast<StationaryImage *>(p);
+    auto plane = PlaneStrategy::getInstance();
+    auto point = plane->getClosestPoint(p);
+    this->first = static_cast<StationaryImage *>(point);
 }
 
 void Chain::setLast(StationaryImage *p)
 {
-    this->last = p;
+    auto plane = PlaneStrategy::getInstance();
+    auto point = plane->getClosestPoint(static_cast<Point *>(p));
+    this->last = static_cast<StationaryImage *>(point);
 }
 
 void Chain::setLast(Point *p)
 {
-	this->last = static_cast<StationaryImage *>(p);
+    auto plane = PlaneStrategy::getInstance();
+    auto point = plane->getClosestPoint(p);
+    this->last= static_cast<StationaryImage *>(point);
 }
 
 void Chain::checkFirstAndLast()
@@ -162,17 +130,12 @@ int Chain::size()
 void Chain::print()
 {
     first->print();
-    //std::cout<<"["<<first->getX()<<", "<<first->getY()<<", "<<first->getZ()<<"]"<<std::endl;
-    //for_each(chain.begin(), chain.end(), [](MovingImage m){
-    //    std::cout<<"["<<m.getX()<<", "<<m.getY()<<", "<<m.getZ()<<"]"<<std::endl;
-    //});
 
     for(int i=0;i<chain.size();i++)
     {
         std::cout<<"["<<chain[i].getX()<<", "<<chain[i].getY()<<", "<<chain[i].getZ()<<"]"<<std::endl;
     }
     last->print();
-    //std::cout<<"["<<getX()<<", "<<getY()<<", "<<getZ()<<"]"<<std::endl;
 }
 
 std::string Chain::stringify()

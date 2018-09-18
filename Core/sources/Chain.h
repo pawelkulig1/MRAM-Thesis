@@ -2,15 +2,15 @@
 #define __CHAIN_H__
 #include <deque>
 #include <Eigen/Dense>
-#include "StationaryImage.h"
-#include "MovingImage.h"
-#include "Point.h"
 #include <iostream>
-#include "Plane.h"
-
+#include "MovingImage.h" //needed because of container
 
 namespace GNEB
 {
+    class StationaryImage;
+    class Point;
+    class PlaneStrategy;
+
 	class Chain
 	{
 		static Chain *instance;

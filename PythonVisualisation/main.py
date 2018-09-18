@@ -1,6 +1,13 @@
-# import sys
+import numpy as np
+import matplotlib
+matplotlib.use("MacOSX")
+import matplotlib.pyplot as plt
+import matplotlib.contour as cont
+import matplotlib.cm as cm
+# from data import *
+import time as tm
+import dataGenerator as dg
 
-# size = int(sys.argv[1])
 
 chains = []
 chain = []
@@ -22,19 +29,17 @@ def parseVector(vector):
 	return tempVec
 
 def getXYArray(arr, poz=0):
-	print("ARR:", arr)
+	# print("ARR:", arr)
 	if len(arr[0]) == 1 and poz != 0:
 		return 0, 0
 	X = []
 	Y = []
 	for el in arr:
+		# print("EL: ", el)
 		X.append(el[poz][0])
 		Y.append(el[poz][1])
 
 	return X, Y	
-
-
-#read data from named pipe
 
 def readFromPipe(name):
 	f = open(name, "r")
@@ -46,7 +51,7 @@ def readFromPipe(name):
 
 x = True
 data = []
-for i in range(10):
+for i in range(40):
 	x = readFromPipe("plotFIFO")
 
 	# print("' ", x, "'")
@@ -79,56 +84,53 @@ for i, e in enumerate(data):
 		if key == "coords":
 			Points.append([parseCords(val)])
 		if key == "deriv":
-			Points[-1].append([parseCords(val)])
+			Points[-1].append(parseCords(val))
 		if key == "spring":
-			Points[-1].append([parseCords(val)])
+			Points[-1].append(parseCords(val))
 
-
-	import numpy as np
-	import matplotlib
-	matplotlib.use("MacOSX")
-	import matplotlib.pyplot as plt
-	import matplotlib.contour as cont
-	import matplotlib.cm as cm
-	from data import *
-	import time as tm
 
 	# ['GTK', 'GTKAgg', 'GTKCairo', 'MacOSX', 'Qt4Agg', 'Qt5Agg', 'TkAgg', 'WX', 'WXAgg', 'GTK3Cairo', 'GTK3Agg', 'WebAgg', 'nbAgg', 'agg', 'cairo', 'gdk', 'pdf', 'pgf', 'ps', 'svg', 'template']
 
-	X = np.arange(-5, 5, 0.1)
-	Y = np.arange(-5, 5, 0.1)
-	Z = np.zeros((len(X), len(Y)))
+	# X = np.arange(-5, 5, 0.1)
+	# Y = np.arange(-5, 5, 0.1)
+	# Z = np.zeros((len(X), len(Y)))
 
-	for i, line in enumerate(data):
-		Gaussian = Gaussian3D(line[1], line[2], line[3], line[4], 10, 0.1)
-		Z += Gaussian.getGaussianData()
+	# for i, line in enumerate(data):
+	# 	Gaussian = Gaussian3D(line[1], line[2], line[3], line[4], 10, 0.1)
+	# 	Z += Gaussian.getGaussianData()
 
-	X, Y = np.meshgrid(X, Y)
+	# X, Y = np.meshgrid(X, Y)
 
-
+	p = dg.Plane(-5, 5, 0.1)
+	p.generatePlane()
 	
-	# plt.subplot(311)
-	plt.contourf(X, Y, Z, cmap=cm.RdYlGn_r)
-	# plt.quiver(0,0,0, 5,5,0, scale = 1)
-	# colors = iter(cm.rainbow(np.linspace(0, 1, 8)))
-	# print(Points[i][0])
+	plt.subplot(311)
+	# plt.contourf(X, Y, Z, cmap=cm.RdYlGn_r)
+	plt.contourf(*p.exportPlotData(), cmap=cm.RdYlGn_r)
 	plt.scatter(*getXYArray(Points), color="r")
 	plt.xlim(-5, 5)
 
-	# plt.subplot(312)
-	# plt.title("deriv")
+	plt.subplot(312)
+	plt.title("deriv")
 	# plt.contourf(X, Y, Z, cmap=cm.RdYlGn_r)
-	# # plt.scatter(*getXYArray(Points), color="r")
+	plt.contourf(*p.exportPlotData(), cmap=cm.RdYlGn_r)
+	Points = Points[1:-1]
+	plt.scatter(*getXYArray(Points), color="r")
 	# # plt.quiver(*getXYArray(Points),0, *getXYArray(Points, 1),0, scale = 1)
 	# print("second plot: ", Points[1:-1], Points)
-	# plt.quiver(*getXYArray(Points[1:-1]), *getXYArray(Points[1:-1], 1), units="xy")
-	# plt.xlim(-5, 5)	
-	# plt.ylim(-5, 5)	
+	
+	plt.quiver(*getXYArray(Points), *getXYArray(Points, 1), units="xy", scale=1)
+	plt.xlim(-5, 5)	
+	plt.ylim(-5, 5)	
 
-	# plt.subplot(313)
-	# plt.title("spring force")
+	plt.subplot(313)
+	plt.title("spring force")
 	# plt.contourf(X, Y, Z, cmap=cm.RdYlGn_r)
-	# plt.scatter(*getXYArray(Points), color="r")
-	# plt.xlim(-5, 5)	
+	plt.contourf(*p.exportPlotData(), cmap=cm.RdYlGn_r)
+	# Points = Points[1:-1]
+	plt.scatter(*getXYArray(Points), color="r")
+	plt.quiver(*getXYArray(Points), *getXYArray(Points, 2), units="xy")
+	plt.xlim(-5, 5)
+	plt.ylim(-5, 5)
 	
 	plt.show()
