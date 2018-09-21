@@ -122,6 +122,19 @@ void Chain::calculateInterpolation(const int Q)
 
 }
 
+double Chain::length()
+{
+    double length = 0;
+    length += Point::getDistance(static_cast<Point *>(first), static_cast<Point *>(&chain[0]));
+    for(int i=0;i<size()-1;i++)
+    {
+        length += Point::getDistance(static_cast<Point *>(&chain[i]), static_cast<Point *>(&chain[i+1]));
+    }
+    length += Point::getDistance(static_cast<Point *>(last), static_cast<Point *> (&chain[size()-1]));
+
+    return length;
+}
+
 int Chain::size()
 {
     return this->chain.size();

@@ -33,6 +33,7 @@ namespace GNEB
         StationaryImage *getFirst();
         StationaryImage *getLast();
         int size();
+        double length();
         void print();        
         std::string stringify();
 

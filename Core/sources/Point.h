@@ -25,6 +25,7 @@ namespace GNEB
         virtual void print();
         virtual std::string stringify();
 
+        static double getDistance(Point *p1, Point *p2);
         //
         //void setX_h(Point *p);
         //void setY_h(Point *p);

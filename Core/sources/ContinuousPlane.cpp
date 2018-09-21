@@ -26,9 +26,12 @@ Eigen::Vector3d ContinuousPlane::calculateDerivative(Point *p)
     double x = p->getX();
     double y = p->getY();
 
-    double dx = (getZ(x + dx, y) - getZ(x, y)) / dx;
-    double dy = (getZ(x, y + dy) - getZ(x, y)) / dy;
-    Eigen::Vector3d derivative(dx, dy, 0);
+    double tempDx = (getZ(x + dx, y) - getZ(x, y)) / dx;
+    double tempDy = (getZ(x, y + dy) - getZ(x, y)) / dy;
+    double sq = sqrt(pow(tempDx, 2) + pow(tempDy, 2));
+    tempDx = (tempDx / sq) * 0.1;
+    tempDy = (tempDy / sq) * 0.1;   
+    Eigen::Vector3d derivative(tempDx, tempDy, 0);
     return derivative;
 }
 

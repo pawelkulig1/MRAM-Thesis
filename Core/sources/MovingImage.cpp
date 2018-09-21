@@ -8,7 +8,6 @@ MovingImage::MovingImage(double x, double y, double z): Point(x, y, z)
     kappa = 1; 
     next = nullptr;
     previous = nullptr;    
-    tau = Eigen::Vector3d(0,0,0);
     calculateDerivative();
 }
 
@@ -18,84 +17,16 @@ void MovingImage::calculateDerivative()
     derivative = plane->calculateDerivative(x, y);
 }
 
-Eigen::Vector3d MovingImage::calculateTangent()
-{
-    Eigen::Vector3d temp;
-    if(next != nullptr && previous != nullptr)
-    {
-        temp = next->getVector() - previous->getVector();
-    }
-    else{
-        std::cout<<"next == nullptr or previous == nullptr"<<std::endl;
-    }
-    tau = temp / temp.norm();
-    return tau;
-}
-
-Eigen::Vector3d MovingImage::calculateUpgradedTangent()
-{
-    double dEMax = (abs(next->getZ() - z) > abs(previous->getZ() - z)) ? abs(next->getZ() - z) : abs(previous->getZ() - z);
-    double dEMin = (abs(next->getZ() - z) < abs(previous->getZ() - z)) ? abs(next->getZ() - z) : abs(previous->getZ() - z);
-
-    Eigen::Vector3d tPlus = next->getVector() - getVector();
-    Eigen::Vector3d tMinus = getVector() - previous->getVector();
-
-    if(next->getZ() >= previous->getZ())
-    {
-        return tPlus * dEMax + tMinus * dEMin;
-    }
-    if(next->getZ() < previous->getZ())
-    {
-        return tPlus * dEMin + tMinus * dEMax;
-    }
-    return tPlus; //to avoid warning
-}
-
-Eigen::Vector3d MovingImage::calculatePerpendicularComponent()
-{
-    calculateTangent();
-    dE = derivative - (derivative.dot(tau))*(tau);
-    return dE;
-}
-
-Eigen::Vector3d MovingImage::calculateSpring()
-{
-    if(previous == nullptr)
-    {
-        std::cout<<x<<" "<<y<<" "<<"Cannot calculate spring force! prev"<<std::endl;
-    }
-    if(next == nullptr)
-    {
-        std::cout<<x<<" "<<y<<" "<<"Cannot calculate spring force! next"<<std::endl;
-    }
-    /*if(tau == Eigen::Vector3d(0,0,0))
-        calculateTangent();
-    auto tempNext = Eigen::Vector3d(next->getX(), next->getY(), 0);
-    auto tempPrev = Eigen::Vector3d(previous->getX(), previous->getY(), 0);
-    //spring kappa * (next - )
-    spring = kappa * ((next->getVector() - getVector()).norm() - (getVector() - previous->getVector()).norm()) * tau;
-    */
-
-    double tempDx = ((previous->getX() + next->getX()) / 2) - x;
-    double tempDy = ((previous->getY() + next->getY()) / 2) - y;
-
-    spring = Eigen::Vector3d(tempDx * 0.1, tempDy * 0.1, 0);
-    return spring;
-}
 
 Eigen::Vector3d MovingImage::calculateTotalForce()
 {
-    NEBForce = (- derivative + spring);
+    NEBForce = (- derivative );
     return NEBForce;
 }
 
 Eigen::Vector3d MovingImage::iterate()
 {
-    //calculateUpgradedTangent();
-    //calculatePerpendicularComponent();
-    calculateSpring();
     calculateTotalForce();
-    //NEBForce =-derivative;
     return NEBForce;
 }
 
@@ -152,6 +83,5 @@ std::string MovingImage::stringify()
     std::string ret = "";
     ret += "coords:" + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + ";";
     ret += "deriv:" + std::to_string(-derivative[0]) + ","+std::to_string(-derivative[1]) + ";"; 
-    ret += "spring:" + std::to_string(spring[0]) + "," + std::to_string(spring[1]) + "," + std::to_string(spring[2]) + ";";
     return ret;
 }

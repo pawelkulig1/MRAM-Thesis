@@ -10,18 +10,11 @@ namespace GNEB
 	class MovingImage : public Point
 	{
 		double kappa; // kappa is spring constant
-        Eigen::Vector3d tau;
-		Eigen::Vector3d dE;
-		Eigen::Vector3d spring;
         Eigen::Vector3d NEBForce;
         Eigen::Vector3d derivative;
 
     public:
         void calculateDerivative();
-        Eigen::Vector3d calculateTangent();
-        Eigen::Vector3d calculateUpgradedTangent();
-        Eigen::Vector3d calculatePerpendicularComponent();
-        Eigen::Vector3d calculateSpring();
         Eigen::Vector3d calculateTotalForce();
 
 		//Point *x_h, *y_h; //x_h point and y_h are to faster calculate derivate dE and not to search for it. They will store closest Point with coordinates x_h = (x+dx, y); y_h = (x, y+dy).
