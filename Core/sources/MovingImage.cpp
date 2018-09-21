@@ -125,7 +125,7 @@ void MovingImage::moveByVector(const Eigen::Vector3d v)
 void MovingImage::moveByTotalForce()
 {
     auto plane = PlaneStrategy::getInstance();
-    this->x += NEBForce[0];
+    this->x += 0; //NEBForce[0];
     this->y += NEBForce[1];
     this->z = plane->getZ(x, y);
     calculateDerivative();
