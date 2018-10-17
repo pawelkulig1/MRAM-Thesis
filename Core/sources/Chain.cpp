@@ -14,11 +14,17 @@ Chain *Chain::getInstance()
 	return instance;
 }
 
-Point Chain::getPoint(unsigned int number)
+MovingImage *Chain::getPoint(unsigned int number)
 {
-	if(number > chain.size())
-		throw("Chain::getPoint() to high index");
-	return chain[number];
+	if(number >= chain.size())
+		throw("Chain::getPoint() to high index: " + std::to_string(number));
+    if(number < 0)
+		throw("Chain::getPoint() to low index: " + std::to_string(number));
+    //if(number == -1)
+    //    return first;
+    //if(number == chain.size())
+    //    return last;
+	return &chain[number];
 }
 
 void Chain::addToChain(MovingImage *p)
@@ -79,23 +85,6 @@ void Chain::setLast(Point *p)
     this->last= static_cast<StationaryImage *>(point);
 }
 
-void Chain::checkFirstAndLast()
-{
-    if(first == nullptr || last == nullptr)
-    {
-        return;
-    }
-
-    StationaryImage *temp = nullptr;
-    if(last->getX() < first->getX() || last->getY() < first->getY())
-    {
-        temp = first;
-        first = last;
-        last = temp;
-    }
-    temp = nullptr;
-}
-
 StationaryImage *Chain::getFirst()
 {
     return first;
@@ -106,6 +95,10 @@ StationaryImage *Chain::getLast()
     return last;
 }
 
+void Chain::setChainRecalculator(AbstractChainRecalculator *cr)
+{
+    this->recalculator = cr;
+}
 
 void Chain::calculateInterpolation(const int Q)
 {
@@ -125,14 +118,19 @@ void Chain::calculateInterpolation(const int Q)
 double Chain::length()
 {
     double length = 0;
-    length += Point::getDistance(static_cast<Point *>(first), static_cast<Point *>(&chain[0]));
+    length += recalculator->distanceBetweenPoints(first, &chain[0]);
     for(int i=0;i<size()-1;i++)
     {
-        length += Point::getDistance(static_cast<Point *>(&chain[i]), static_cast<Point *>(&chain[i+1]));
+        length += recalculator->distanceBetweenPoints(&chain[i], &chain[i+1]);
     }
-    length += Point::getDistance(static_cast<Point *>(last), static_cast<Point *> (&chain[size()-1]));
+    length += recalculator->distanceBetweenPoints(last, &chain[size()-1]);
 
     return length;
+}
+
+void Chain::resetImages()
+{
+    chain = recalculator->recalculateChain();
 }
 
 int Chain::size()
@@ -164,3 +162,9 @@ std::string Chain::stringify()
     return ret;
 
 }
+
+void Chain::clearChain()
+{
+    chain.erase(chain.begin(), chain.end());
+}
+

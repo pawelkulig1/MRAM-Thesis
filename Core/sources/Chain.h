@@ -4,6 +4,7 @@
 #include <Eigen/Dense>
 #include <iostream>
 #include "MovingImage.h" //needed because of container
+#include "AbstractChainRecalculator.h"
 
 namespace GNEB
 {
@@ -17,9 +18,11 @@ namespace GNEB
 		Chain(){};
 		std::deque<MovingImage> chain;
         StationaryImage	*first, *last;
+        AbstractChainRecalculator *recalculator;
+
 	public:
 		static Chain *getInstance();
-		Point getPoint(unsigned int number);
+        MovingImage *getPoint(unsigned int number);
 		std::deque<MovingImage>::iterator begin();
 		std::deque<MovingImage>::iterator end();
 		void addToChain(MovingImage p);
@@ -28,14 +31,16 @@ namespace GNEB
 		void setFirst(Point *p);
    		void setLast(StationaryImage *p);
 		void setLast(Point *p);
-        void checkFirstAndLast();
+        void setChainRecalculator(AbstractChainRecalculator *cr);
 		void calculateInterpolation(const int Q);
         StationaryImage *getFirst();
         StationaryImage *getLast();
         int size();
         double length();
+        void resetImages();
         void print();        
         std::string stringify();
+        void clearChain();
 
 		//calculate interpolation of initial path
 

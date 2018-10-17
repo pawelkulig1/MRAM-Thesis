@@ -11,6 +11,12 @@ MovingImage::MovingImage(double x, double y, double z): Point(x, y, z)
     calculateDerivative();
 }
 
+MovingImage::MovingImage(Point *p)
+{
+    kappa = 1;
+}
+
+
 void MovingImage::calculateDerivative()
 {
     auto plane = PlaneStrategy::getInstance();
@@ -83,5 +89,6 @@ std::string MovingImage::stringify()
     std::string ret = "";
     ret += "coords:" + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + ";";
     ret += "deriv:" + std::to_string(-derivative[0]) + ","+std::to_string(-derivative[1]) + ";"; 
+    ret += "spring:" + std::to_string(0) + ","+std::to_string(0) + ";"; 
     return ret;
 }

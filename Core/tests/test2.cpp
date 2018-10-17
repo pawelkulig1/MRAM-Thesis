@@ -1,11 +1,11 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE Hello
 #include <boost/test/unit_test.hpp>
-#include "../Parsers/PlainDataParser.h"
-#include "../Plane.h"
+#include "../sources/Parsers/PlainDataParser.h"
+#include "../sources/Plane.h"
 //#include "../MovingImage.h"
-#include "../Chain.h"
-#include "../Point.h"
+#include "../sources/Chain.h"
+#include "../sources/Point.h"
 
 
 

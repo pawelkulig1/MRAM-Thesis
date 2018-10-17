@@ -25,7 +25,7 @@ namespace GNEB
         virtual void print();
         virtual std::string stringify();
 
-        static double getDistance(Point *p1, Point *p2);
+        //static double getDistance(Point *p1, Point *p2);
         //
         //void setX_h(Point *p);
         //void setY_h(Point *p);
@@ -33,6 +33,7 @@ namespace GNEB
         Eigen::Vector3d getVector();
         bool operator==(Point p);
         bool operator==(Point *p);
+        
 //		friend std::ostream& operator<<(std::ostream& os, Point *p);
     };
 }

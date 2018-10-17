@@ -21,6 +21,7 @@ namespace GNEB
         Point *next, *previous;
 
 		MovingImage(double x, double y, double z);
+        MovingImage(Point *p);
         Eigen::Vector3d iterate();
 		void moveToCords(double x, double y);
 		void moveByVector(const Eigen::Vector3d);
