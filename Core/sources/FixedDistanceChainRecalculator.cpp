@@ -48,10 +48,6 @@ Eigen::Vector3d FixedDistanceChainRecalculator::findNumberOfFunction(int pointNu
         i++;
     }
 
-    //std::cout<<"distSum: "<<prevDistSum<<" "<<dl<<" "<<std::endl;
-    //double distanceLeft = dl * (pointNumber + 1) - prevDistSum;
-
-
     //get proper output 
     Eigen::Vector3d outPoint;
     Point *LineFirstPoint;
@@ -76,43 +72,6 @@ Eigen::Vector3d FixedDistanceChainRecalculator::findNumberOfFunction(int pointNu
 
     outPoint = getDistantPointOnFunction(dl, LineFirstPoint, chain->getPoint(i), PreviousPoint);
 
-
-    /*if(i == 0)
-    {
-        std::cout<<"i == 0"<<std::endl;
-        //outPoint = getDistantPointOnFunction(distanceLeft, first, chain->getPoint(0));
-        outPoint = getDistantPointOnFunction(dl, first, chain->getPoint(0), first);
-    }
-    else if(i == chainCopy.size())
-    {
-        std::cout<<"i == chainCopy.size()"<<std::endl;
-        //outPoint = getDistantPointOnFunction(distanceLeft, last, chain->getPoint(chainCopy.size() - 1));
-        outPoint = getDistantPointOnFunction(dl, last, chain->getPoint(chainCopy.size() - 1), chain->getPoint(chainCopy.size() - 1));
-    }
-    else
-    {
-        std::cout<<"else"<<std::endl;
-        //outPoint = getDistantPointOnFunction(distanceLeft, chain->getPoint(i-1), chain->getPoint(i));
-//        std::cout<<"before point on function! "<<i<<" "<<pointNumber - 1<<std::endl;
-        Point *beforePoint;
-        if(pointNumber == 0)
-            beforePoint = first;
-        else
-            beforePoint = &chainCopy[pointNumber - 1];
-        std::cout<<"beforePoint: x0: "<<beforePoint->getX()<<"pNum: "<<pointNumber<<std::endl;
-        outPoint = getDistantPointOnFunction(dl, chain->getPoint(i-1), chain->getPoint(i), beforePoint); 
-    }*/
-
-   /* Point *beforePoint;
-    if(pointNumber == 0)
-        beforePoint = first;
-    else
-        beforePoint = &chainCopy[pointNumber - 1];*/
-
-    //outPoint = getDistantPointOnFunction(dl, chain->getPoint(i-1), chain->getPoint(i), beforePoint);
-
-   // std::cout<<"outVec: "<<outPoint<<std::endl;
-    //outPoint
     return outPoint;
 }
 

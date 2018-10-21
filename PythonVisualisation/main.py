@@ -134,3 +134,7 @@ for i, e in enumerate(data):
 	plt.ylim(-5, 5)
 	
 	plt.show()
+
+
+# (-A*B*y0 - A*C + B^2*x0 - B*sqrt(A^2*r^2 - A^2*x0^2 - 2*A*B*x0*y0 - 2*A*C*x0 + B^2*r^2 - B^2*y0^2 - 2*B*C*y0 - C^2))/(A^2 + B^2)
+
