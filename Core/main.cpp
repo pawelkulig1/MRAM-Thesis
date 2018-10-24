@@ -44,31 +44,36 @@ int main()
 
     c->setFirst(new Point(-3, 2, 1));
     c->setLast(new Point(3, 2, 1));
-    c->addToChain(new MovingImage(-2, 1, 1));
-    c->addToChain(new MovingImage(0, 0, 1));
-    c->addToChain(new MovingImage(2, 1, 1));
+    c->addToChain(new MovingImage(-2, 2, 1));
+    c->addToChain(new MovingImage(0, 2, 1));
+    c->addToChain(new MovingImage(2, 2, 1));
     c->print();
      
-    //Pipe *pipe = new Pipe("../PythonVisualisation/plotFIFO");
-    //pipe->write(c->stringify());
-    for(int i=0;i<39;i++)
+    Pipe *pipe = new Pipe("../PythonVisualisation/plotFIFO");
+    pipe->write(c->stringify());
+    for(int i=0;i<5;i++)
     {
-        /*for(auto it=c->begin();it<c->end();it++)
+        for(auto it=c->begin();it<c->end();it++)
         {
             it->iterate();
         }
         for(auto it=c->begin();it<c->end();it++)
         {
-            it->moveByTotalForce();
-        }*/
-        cout<<"before reseting"<<endl;
-        c->resetImages();
+            //it->moveByTotalForce();
+        }
+        try{
+            c->resetImages();
+        }
+        catch(std::string err)
+        {
+            std::cout<<err<<std::endl;
+        }
         c->print();
-        //pipe->write(c->stringify());
+        pipe->write(c->stringify());
     }
 
     std::cout<<"===================="<<std::endl;
 
     c->print();
-    //delete pipe;
+    delete pipe;
 }

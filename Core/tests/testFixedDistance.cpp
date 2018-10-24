@@ -8,6 +8,9 @@
 #include "../sources/ContinuousPlane.h"
 #include "../sources/FixedDistanceChainRecalculator.h"
 
+//#define TEST 1
+
+
 double exampleFunction(double x, double y)
 {
     return 0;
@@ -42,6 +45,36 @@ BOOST_AUTO_TEST_CASE(SimpleLineRecalculation)
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getZ(), 0);
 }
 
+BOOST_AUTO_TEST_CASE(SimpleLineRecalculation2)
+{
+    auto plane = PlaneStrategy::getInstance();
+    auto chain = Chain::getInstance();
+    auto cPlane = new ContinuousPlane();
+    auto chainRecalculator = new FixedDistanceChainRecalculator();
+    chain->clearChain();
+    cPlane->setFunction(exampleFunction);
+    plane->setStrategy(cPlane);
+    chain->setChainRecalculator(chainRecalculator);
+    chain->setFirst(new Point(-3, 2, 0));
+    chain->setLast(new Point(3, 2, 0));
+    chain->addToChain(new MovingImage(1.9, 2, 0));
+    chain->addToChain(new MovingImage(2, 2, 0));
+    chain->addToChain(new MovingImage(2.1, 2, 0));
+    chain->resetImages();
+
+    BOOST_CHECK_EQUAL(chain->getPoint(0)->getX(), -1.5);
+    BOOST_CHECK_EQUAL(chain->getPoint(0)->getY(), 2);
+    BOOST_CHECK_EQUAL(chain->getPoint(0)->getZ(), 0);
+    
+    BOOST_CHECK_EQUAL(chain->getPoint(1)->getX(), 0);
+    BOOST_CHECK_EQUAL(chain->getPoint(1)->getY(), 2);
+    BOOST_CHECK_EQUAL(chain->getPoint(1)->getZ(), 0);
+
+    BOOST_CHECK_EQUAL(chain->getPoint(2)->getX(), 1.5);
+    BOOST_CHECK_EQUAL(chain->getPoint(2)->getY(), 2);
+    BOOST_CHECK_EQUAL(chain->getPoint(2)->getZ(), 0);
+}
+
 BOOST_AUTO_TEST_CASE(HeavyLineRecalculation)
 { 
     auto plane = PlaneStrategy::getInstance();
@@ -57,8 +90,8 @@ BOOST_AUTO_TEST_CASE(HeavyLineRecalculation)
   
     int amount = 101;
 
-    double dx = 6.0 / (amount + 2);
-    for(int i=0;i<=amount;i++)
+    double dx = 6.0 / (amount + 1);
+    for(int i=0;i<amount;i++)
     {
         chain->addToChain(new MovingImage(-3.0 + dx * (i + 1.0), 2, 0));
     }
@@ -66,10 +99,90 @@ BOOST_AUTO_TEST_CASE(HeavyLineRecalculation)
     chain->resetImages();
     double error = 1;
 
-    for(int i=0;i<=amount;i++)
+    for(int i=0;i<amount;i++)
     {
+        if(i == amount/2 && amount%2 == 1){
+            BOOST_CHECK_SMALL(chain->getPoint(i)->getX(), 0.01);
+            BOOST_CHECK_EQUAL(chain->getPoint(i)->getY(), 2);
+            continue;
+        }
+
         BOOST_CHECK_CLOSE(chain->getPoint(i)->getX(), -3.0 + dx * (i + 1.0), error);
         BOOST_CHECK_EQUAL(chain->getPoint(i)->getY(), 2);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(HeavyLineRecalculationMove)
+{ 
+    auto plane = PlaneStrategy::getInstance();
+    auto chain = Chain::getInstance();
+    auto cPlane = new ContinuousPlane();
+    auto chainRecalculator = new FixedDistanceChainRecalculator();
+    chain->clearChain();
+    cPlane->setFunction(exampleFunction);
+    plane->setStrategy(cPlane);
+    chain->setChainRecalculator(chainRecalculator);
+    chain->setFirst(new Point(-3, 2, 0));
+    chain->setLast(new Point(3, 2, 0));
+  
+    int amount = 21;
+
+    double dx = 6.0 / (amount + 1);
+    double er = 0.2;
+    for(int i=0;i<amount;i++)
+    {
+        chain->addToChain(new MovingImage(-3.0 + dx * (i + 1.0) + er, 2, 0));
+    }
+    
+    chain->resetImages();
+    double error = 1;
+
+    for(int i=0;i<amount;i++)
+    {
+        if(i == amount/2 && amount%2 == 1){
+            BOOST_CHECK_SMALL(chain->getPoint(i)->getX(), 0.01);
+            BOOST_CHECK_EQUAL(chain->getPoint(i)->getY(), 2);
+            continue;
+        }
+        BOOST_CHECK_CLOSE(chain->getPoint(i)->getX(), -3.0 + dx * (i + 1.0), error);
+        BOOST_CHECK_EQUAL(chain->getPoint(i)->getY(), 2);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(HeavyLineRecalculationBothAxes)
+{ 
+    auto plane = PlaneStrategy::getInstance();
+    auto chain = Chain::getInstance();
+    auto cPlane = new ContinuousPlane();
+    auto chainRecalculator = new FixedDistanceChainRecalculator();
+    chain->clearChain();
+    cPlane->setFunction(exampleFunction);
+    plane->setStrategy(cPlane);
+    chain->setChainRecalculator(chainRecalculator);
+    chain->setFirst(new Point(-5, -2, 0));
+    chain->setLast(new Point(5, 2, 0));
+  
+    int amount = 101;
+
+    double dy = 4.0 / (amount + 1);
+    double dx = 10.0 / (amount + 1);
+    for(int i=0;i<amount;i++)
+    {
+        chain->addToChain(new MovingImage(-5.0 + dx * (i + 1), -2.0 + dy * (i + 1),  0));
+    }
+    
+    chain->resetImages();
+    double error = 1;
+
+    for(int i=0;i<amount;i++)
+    {
+        if(i == amount/2 && amount%2 == 1){
+            BOOST_CHECK_SMALL(chain->getPoint(i)->getX(), 0.01);
+            BOOST_CHECK_SMALL(chain->getPoint(i)->getY(), 0.01);
+            continue;
+        }
+        BOOST_CHECK_CLOSE(chain->getPoint(i)->getX(), -5.0 + dx * (i + 1), error);
+        BOOST_CHECK_CLOSE(chain->getPoint(i)->getY(), -2.0 + dy * (i + 1.0), error);
     }
 }
 
@@ -98,9 +211,9 @@ BOOST_AUTO_TEST_CASE(SimpleCurveRecalculation)
     BOOST_CHECK_CLOSE(chain->getPoint(0)->getY(), 0.809, error);
     BOOST_CHECK_CLOSE(chain->getPoint(0)->getZ(), 0, error);
     
-    BOOST_CHECK_CLOSE(chain->getPoint(1)->getX(), 0.025, error);
-    BOOST_CHECK_CLOSE(chain->getPoint(1)->getY(), 0.012, error);
-    BOOST_CHECK_CLOSE(chain->getPoint(1)->getZ(), 0, error);
+    BOOST_CHECK_SMALL(chain->getPoint(1)->getX(), 0.1);
+    BOOST_CHECK_SMALL(chain->getPoint(1)->getY(), 0.1);
+    BOOST_CHECK_SMALL(chain->getPoint(1)->getZ(), 0.01);
 
     BOOST_CHECK_CLOSE(chain->getPoint(2)->getX(), 1.617, error);
     BOOST_CHECK_CLOSE(chain->getPoint(2)->getY(), 0.809, error);
@@ -148,9 +261,9 @@ BOOST_AUTO_TEST_CASE(MediumCurveRecalculation)
     BOOST_CHECK_CLOSE(chain->getPoint(3)->getY(), 0.314, error);
     BOOST_CHECK_CLOSE(chain->getPoint(3)->getZ(), 0, error);
     
-    BOOST_CHECK_CLOSE(chain->getPoint(4)->getX(), 0.041, error);
-    BOOST_CHECK_CLOSE(chain->getPoint(4)->getY(), 0.012, error);
-    BOOST_CHECK_CLOSE(chain->getPoint(4)->getZ(), 0, error);
+    BOOST_CHECK_SMALL(chain->getPoint(4)->getX(), 0.1);
+    BOOST_CHECK_SMALL(chain->getPoint(4)->getY(), 0.1);
+    BOOST_CHECK_SMALL(chain->getPoint(4)->getZ(), 0.1);
 
     BOOST_CHECK_CLOSE(chain->getPoint(5)->getX(), 0.74, error);
     BOOST_CHECK_CLOSE(chain->getPoint(5)->getY(), 0.22, error);
