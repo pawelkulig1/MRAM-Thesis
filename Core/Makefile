@@ -19,7 +19,7 @@ testChain: main.o tests/test2.cpp $(FILES)
 	./tests/testChain.o
 
 testFixedDistance: tests/testFixedDistance.cpp $(FILES)
-	$(CXX) -o tests/testFixedDistance.o tests/testFixedDistance.cpp $(FILES) $(TEST_FLAGS) $(LIBS)
+	$(CXX) -o tests/testFixedDistance.o tests/testFixedDistance.cpp $(FILES) $(TEST_FLAGS) $(LIBS) -g
 
 outs/%.o: sources/%.cpp sources/%.h;
 	$(CXX) -c $< $(LIBS) $(FLAGS) -o $@
