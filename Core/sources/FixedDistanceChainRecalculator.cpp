@@ -5,7 +5,7 @@
 
 FixedDistanceChainRecalculator::FixedDistanceChainRecalculator() : AbstractChainRecalculator()
 {
-
+    normalMode = true;
 }
 
 std::function<double(double)> FixedDistanceChainRecalculator::getFunctionConnectingPoints(Point *p1, Point *p2){
@@ -27,13 +27,16 @@ Eigen::Vector3d FixedDistanceChainRecalculator::findNumberOfFunction(int pointNu
 {
     auto chain = Chain::getInstance();
     auto first = chain->getFirst();
-//    auto last = chain->getLast();
+    auto last = chain->getLast();
 
-    double cLen = chain->length();
+    double cLen = distanceBetweenPoints(first, &chainCopy[0]);
+    cLen += distanceBetweenPoints(&chainCopy[chainCopy.size() - 1], last);
+    for(int i=0;i<chainCopy.size()-1;i++)
+    {
+        cLen += distanceBetweenPoints(&chainCopy[i], &chainCopy[i+1]);
+    }
 
     double dl = cLen / (chainCopy.size() + 1); // +1 because chain is chain + 2 (first and last) and number of lines connecting n points is n - 1
-   
-    //std::cout<<"cLen: "<<cLen<<std::endl;
 
     int i = 0; 
     double distSum = distanceBetweenPoints(first, &chainCopy[0]);
@@ -53,7 +56,7 @@ Eigen::Vector3d FixedDistanceChainRecalculator::findNumberOfFunction(int pointNu
     Point *LineFirstPoint;
     Point *LineSecondPoint;
     Point *PreviousPoint;
-
+    
     if(i == 0)
     {
         LineFirstPoint = first;
@@ -87,7 +90,7 @@ Eigen::Vector3d FixedDistanceChainRecalculator::findNumberOfFunction(int pointNu
 }
 
 
-Eigen::Vector3d FixedDistanceChainRecalculator::getDistantPointOnFunction(double len, Point *p1, Point *p2, Point *lPoint, bool option = false)
+Eigen::Vector3d FixedDistanceChainRecalculator::getDistantPointOnFunction(double len, Point *p1, Point *p2, Point *lPoint)
 {
     //p1 is point we are going to move, circle middle is in lPoint.
     double x0 = lPoint->getX(); //middle of circle
@@ -96,54 +99,40 @@ Eigen::Vector3d FixedDistanceChainRecalculator::getDistantPointOnFunction(double
     double C = p2->getY() - A * p2->getX();
     double B = -1;
 
+    //problem with vertical line occured A-> inf, algorithm has to calculate if A will be in nice range and if not, it uses other formulas.
     double delta = 0.1;
     double dx = abs(p1->getX() - p2->getX());
     double dy = abs(p1->getY() - p2->getY());
-    std::cout << "x0: "<< x0 << " y0: " << y0 << " A: " << A << " B: " << B << " C: " << C << " dx: " << dx << " dy: " << dy << " len: " << len << std::endl;
-    if(p1->getX() - delta < p2->getX() && p1->getX() + delta >= p2->getX() && dx*10 < dy)
-    {
-        std::cout<<"here "<<std::endl;
 
+    if(p1->getX() - delta < p2->getX() && p1->getX() + delta >= p2->getX() && dx*(1/delta) < dy)
+    {
         A = 1;
         B = (-p1->getX() + p2->getX())/(p1->getY() - p2->getY());
-        C = (p1->getX()*p2->getY() - p2->getX()*p1->getY())/(p1->getY() - p2->getY()); 
-        
+        C = (p1->getX()*p2->getY() - p2->getX()*p1->getY())/(p1->getY() - p2->getY());
     }
-    std::cout<<"under sqrt: " << pow(A, 2) * pow(len,2) - pow(A, 2) * pow(x0, 2) - 2 * A * B * x0 * y0 - 2 * A * C * x0 + pow(B, 2) * pow(len, 2) - pow(B, 2) * pow(y0, 2) - 2 * B * C * y0 - pow(C, 2) << std::endl;
 
-    //A**2*r**2 - A**2*x0**2 - 2*A*B*x0*y0 - 2*A*C*x0 + B**2*r**2 - B**2*y0**2 - 2*B*C*y0 - C**2
-    double repeatingPart = sqrt(pow(A, 2) * pow(len,2) - pow(A, 2) * pow(x0, 2) - 2 * A * B * x0 * y0 - 2 * A * C * x0 + pow(B, 2) * pow(len, 2) - pow(B, 2) * pow(y0, 2) - 2 * B * C * y0 - pow(C, 2));
+    double underSqrt = pow(A, 2) * pow(len,2) - pow(A, 2) * pow(x0, 2) - 2 * A * B * x0 * y0 - 2 * A * C * x0 + pow(B, 2) * pow(len, 2) - pow(B, 2) * pow(y0, 2) - 2 * B * C * y0 - pow(C, 2);
 
+    if(underSqrt < 0) //possible if there are no such points on real plane - this meand previous point was set incorectly
+    {
+        throw std::string("NaN value");
+    }
+
+    //now if we now we are safe calculate sqrt
+    double repeatingPart = sqrt(underSqrt);
+
+    //final results: 
     double x1 = (-A * B * y0 - A * C + pow(B, 2) * x0 - B * repeatingPart)/(pow(A, 2) + pow(B, 2));
     double y1 = (pow(A, 2) * y0 - A * B * x0 + A * repeatingPart - B*C)/(pow(A, 2) + pow(B, 2));
     double x2 = (-A * B * y0 - A * C + pow(B, 2) * x0 + B * repeatingPart)/(pow(A, 2) + 1);
     double y2 = (pow(A, 2) * y0 - A * B * x0 - A * repeatingPart - B*C)/(pow(A, 2) + pow(B, 2));
 
-    std::cout<<"x1: " << x1 << " y1: " << y1 << " repPart: " << repeatingPart << " p1x: " << p1->getX() <<" p2x: " << p2->getX() << " A: " << A << " p1y: " << p1->getY() << " p2y: " << p2->getY() << std::endl;
-    //std::function<double(double)> func = getFunctionConnectingPoints(p1, p2);
-
-    Eigen::Vector3d chainDirection = getChainDirection(); //next point direction? how to guess
+    Eigen::Vector3d chainDirection = getChainDirection(); //to pick one solution i decided to use chainDirection algorithm, in most cases it fits.
 
     double retX = 0;
     double retY = 0;
-    /*Point tempP1(x1, y1, 0);
-    Point tempP2(x2, y2, 0);
-    double d1 = distanceBetweenPoints(&tempP1, p1);
-    double d2 = distanceBetweenPoints(&tempP2, p1);
-    std::cout<<"d1: " << d1 << " d2: " << d2 <<std::endl; 
     
-    if(d1 >= d2)
-    {
-        retX = x1;
-        retY = y1;
-    }
-    else
-    {
-        retX = x2;
-        retY = y2;
-    }*/
-
-
+    // two formulas so to versions of chainDirection algorithm (y and x asix)
     if(A == 1 && B != -1)
     {
         //y chooses
@@ -151,11 +140,23 @@ Eigen::Vector3d FixedDistanceChainRecalculator::getDistantPointOnFunction(double
         {
             retX = x1;
             retY = y1;
+
+            if(!normalMode)
+            {
+                retX = x2;
+                retY = y2;
+            }
         }
         else
         {
             retX = x2;
             retY = y2;
+
+            if(!normalMode)
+            {
+                retX = x1;
+                retY = y1;
+            }
         }
     }
     else
@@ -164,48 +165,26 @@ Eigen::Vector3d FixedDistanceChainRecalculator::getDistantPointOnFunction(double
         {
             retX = x1;
             retY = y1;
+            if(!normalMode)
+            {
+                retX = x2;
+                retY = y2;
+            }
         }
         else
         {
             retX = x2;
             retY = y2;
+
+            if(!normalMode)
+            {
+                retX = x1;
+                retY = y1;
+            }
         }
     }
     
-    std::cout<<"retX: " << retX << " retY: " << retY << std::endl;
-    
     return Eigen::Vector3d(retX, retY, 0);
-
-
-    /*if(chainDirection[0] >= 0 && chainDirection[1] >= 0) //first quarter
-    {
-        x1 = x1 >= x2 ? x1 : x2;
-        y1 = y1 >= y2 ? y1 : y2;
-        return Eigen::Vector3d(x1, y1, 0);
-    }
-    else if(chainDirection[0] < 0 && chainDirection[1] >= 0) //second quarter
-    { 
-        x1 = x1 < x2 ? x1 : x2;
-        y1 = y1 >= y2 ? y1 : y2;
-        return Eigen::Vector3d(x1, y1, 0);
-    }
-    else if(chainDirection[0] >= 0 && chainDirection[1] < 0)
-    { 
-        x1 = x1 >= x2 ? x1 : x2;
-        y1 = y1 < y2 ? y1 : y2;
-        return Eigen::Vector3d(x1, y1, 0);
-    }
-    else if(chainDirection[0] < 0 && chainDirection[1] < 0)
-    {
-        x1 = x1 < x2 ? x1 : x2;
-        y1 = y1 < y2 ? y1 : y2;
-        return Eigen::Vector3d(x1, y1, 0);
-    }
-    else
-    {
-        throw("This may never happen!"); //TODO
-    }*/
-    return Eigen::Vector3d(0,0,0); //avoid warning
 }
 
 Eigen::Vector3d FixedDistanceChainRecalculator::getChainDirection()
@@ -222,12 +201,24 @@ std::deque<MovingImage> FixedDistanceChainRecalculator::recalculateChain()
     {
         chainCopy.push_back(*chain->getPoint(i));
     }
-   // double cLen = chain->length();
+
     Eigen::Vector3d tempVec;
     for(int i=0;i<chainCopy.size();i++)
     {
-        tempVec = findNumberOfFunction(i);
-        std::cout<<"============================================================="<<std::endl;
+        try{
+            tempVec = findNumberOfFunction(i);
+        }
+        catch(std::string s)
+        {
+            if(s == "NaN value") //last point was setup not properly, we have to correct it.
+            {
+                i--;
+                chainCopy[i] = chain->getPoint(i); //for calculation we have to restore position of that point to initial value
+                normalMode = false; //inverses chainDirection algorithm, function will pick other point now
+                tempVec = findNumberOfFunction(i); //calculate once again.
+                normalMode = true; //disable inversion
+            }
+        }
         chainCopy[i].moveToCords(tempVec[0], tempVec[1]);
     }
 

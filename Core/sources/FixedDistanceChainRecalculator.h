@@ -5,6 +5,8 @@ namespace GNEB
 {
     class FixedDistanceChainRecalculator: public AbstractChainRecalculator
     {
+    private:
+        bool normalMode;
 
     public:
         FixedDistanceChainRecalculator();

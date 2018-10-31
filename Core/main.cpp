@@ -46,9 +46,9 @@ int main()
 
     c->print();
      
-    //Pipe *pipe = new Pipe("../PythonVisualisation/plotFIFO");
-    //pipe->write(c->stringify());
-    for(int i=0;i<40;i++)
+    Pipe *pipe = new Pipe("../PythonVisualisation/plotFIFO");
+    pipe->write(c->stringify());
+    for(int i=0;i<60;i++)
     {
         for(auto it=c->begin();it<c->end();it++)
         {
@@ -58,22 +58,14 @@ int main()
         {
             it->moveByTotalForce();
         }
-        //try{
-        std::cout<<"before resetting!"<<std::endl;
         c->print();
-        std::cout<<"after resetting!"<<std::endl;
         c->resetImages();
-        //}
-        /*catch(std::string err)
-        {
-            std::cout<<err<<std::endl;
-        }*/
         c->print();
-        //pipe->write(c->stringify());
+        pipe->write(c->stringify());
     }
 
     std::cout<<"===================="<<std::endl;
 
     c->print();
-    //delete pipe;
+    delete pipe;
 }
