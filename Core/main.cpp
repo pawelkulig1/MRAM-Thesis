@@ -32,41 +32,49 @@ double func(double x, double y)
 
 int main()
 {
-	Chain *c = Chain::getInstance();
+	Chain *chain = new Chain(); 
 	//auto parser = new Parser::PlainDataParser("../data/data1.dat");
 	auto plane = PlaneStrategy::getInstance();
     auto cPlane = new ContinuousPlane();
     cPlane->setFunction(func);
     plane->setStrategy(cPlane);
     auto cRecalculator = new FixedDistanceChainRecalculator();
-    c->setChainRecalculator(cRecalculator);
-    c->setFirst(new Point(-2.3, 0, plane->getZ(-2.3, 0)));
-    c->setLast(new Point(2.3, 0, plane->getZ(2.3, 0)));
-    c->calculateInterpolation(5);
+    chain->setFirst(new Point(-2.3, 0, plane->getZ(-2.3, 0)));
+    chain->setLast(new Point(2.3, 0, plane->getZ(2.3, 0)));
+    chain->calculateInterpolation(5);
 
-    c->print();
      
-    Pipe *pipe = new Pipe("../PythonVisualisation/plotFIFO");
-    pipe->write(c->stringify());
-    for(int i=0;i<13;i++)
+    //Pipe *pipe = new Pipe("../PythonVisualisation/plotFIFO");
+    //pipe->write(c->stringify());
+    //
+    Chain *chainMemento = new Chain();
+
+    for(int i=0;i<20;i++)
     {
+        chainMemento->setCopy(chain);
         std::cout<<"ITERATION: " << i << std::endl;
-        for(auto it=c->begin();it<c->end();it++)
+
+        for(int i=0;i<chain->size();i++)
         {
-            it->iterate();
+            chain->getPoint(i)->iterate();
         }
-        for(auto it=c->begin();it<c->end();it++)
+        for(int i=0;i<chain->size();i++)
         {
-            it->moveByTotalForce();
+            chain->getPoint(i)->moveByTotalForce();
         }
-        //c->print();
-        c->resetImages();
-        //c->print();
-        pipe->write(c->stringify());
+        chain->print();
+        
+        Chain temp = cRecalculator->recalculateChain(chain);
+        if(chainMemento.length() < chain.length())
+            chain->setCopy(&temp);
+        else
+            break;
+        //pipe->write(c->stringify());
     }
 
     std::cout<<"===================="<<std::endl;
 
-    c->print();
-    delete pipe;
+    chain->print();
+    //delete pipe;
+    return 0;
 }

@@ -1,5 +1,5 @@
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE Hello
+//#define BOOST_TEST_MODULE testFixedDistance
 
 #include <boost/test/unit_test.hpp>
 
@@ -8,29 +8,25 @@
 #include "../sources/ContinuousPlane.h"
 #include "../sources/FixedDistanceChainRecalculator.h"
 
-//#define TEST 1
+#include "exampleFunction.h"
 
-
-double exampleFunction(double x, double y)
-{
-    return 0;
-}
 
 BOOST_AUTO_TEST_CASE(SimpleLineRecalculation)
 {
     auto plane = PlaneStrategy::getInstance();
-    auto chain = Chain::getInstance();
+    auto chain = new Chain();
     auto cPlane = new ContinuousPlane();
-    auto chainRecalculator = new FixedDistanceChainRecalculator();
+    AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
+
     cPlane->setFunction(exampleFunction);
     plane->setStrategy(cPlane);
-    chain->setChainRecalculator(chainRecalculator);
     chain->setFirst(new Point(-3, 2, 0));
     chain->setLast(new Point(3, 2, 0));
     chain->addToChain(new MovingImage(-2, 2, 0));
     chain->addToChain(new MovingImage(-0, 2, 0));
     chain->addToChain(new MovingImage(2, 2, 0));
-    chain->resetImages();
+    Chain temp = chainRecalculator->recalculateChain(chain); //TODO std::move
+    chain->setCopy(&temp);
 
     BOOST_CHECK_EQUAL(chain->getPoint(0)->getX(), -1.5);
     BOOST_CHECK_EQUAL(chain->getPoint(0)->getY(), 2);
@@ -43,24 +39,27 @@ BOOST_AUTO_TEST_CASE(SimpleLineRecalculation)
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getX(), 1.5);
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getY(), 2);
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getZ(), 0);
+    delete chain;
+    delete cPlane;
 }
 
 BOOST_AUTO_TEST_CASE(SimpleLineRecalculation2)
 {
     auto plane = PlaneStrategy::getInstance();
-    auto chain = Chain::getInstance();
+    auto chain = new Chain();
     auto cPlane = new ContinuousPlane();
-    auto chainRecalculator = new FixedDistanceChainRecalculator();
-    chain->clearChain();
+    AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();
+
     cPlane->setFunction(exampleFunction);
     plane->setStrategy(cPlane);
-    chain->setChainRecalculator(chainRecalculator);
+
     chain->setFirst(new Point(-3, 2, 0));
     chain->setLast(new Point(3, 2, 0));
     chain->addToChain(new MovingImage(1.9, 2, 0));
     chain->addToChain(new MovingImage(2, 2, 0));
     chain->addToChain(new MovingImage(2.1, 2, 0));
-    chain->resetImages();
+    Chain temp = chainRecalculator->recalculateChain(chain);
+    chain->setCopy(&temp);
 
     BOOST_CHECK_EQUAL(chain->getPoint(0)->getX(), -1.5);
     BOOST_CHECK_EQUAL(chain->getPoint(0)->getY(), 2);
@@ -73,24 +72,28 @@ BOOST_AUTO_TEST_CASE(SimpleLineRecalculation2)
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getX(), 1.5);
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getY(), 2);
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getZ(), 0);
+
+    delete chain;
+    delete cPlane;
 }
 
 BOOST_AUTO_TEST_CASE(SimpleVerticalLineRecalculation)
 {
     auto plane = PlaneStrategy::getInstance();
-    auto chain = Chain::getInstance();
+    auto chain = new Chain();
     auto cPlane = new ContinuousPlane();
-    auto chainRecalculator = new FixedDistanceChainRecalculator();
-    chain->clearChain();
+    AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
+
     cPlane->setFunction(exampleFunction);
     plane->setStrategy(cPlane);
-    chain->setChainRecalculator(chainRecalculator);
+
     chain->setFirst(new Point(0, 0, 0));
     chain->setLast(new Point(0, 4, 0));
     chain->addToChain(new MovingImage(0, 1, 0));
     chain->addToChain(new MovingImage(0, 2, 0));
     chain->addToChain(new MovingImage(0, 3, 0));
-    chain->resetImages();
+    Chain temp = chainRecalculator->recalculateChain(chain);
+    chain->setCopy(&temp);
 
     BOOST_CHECK_EQUAL(chain->getPoint(0)->getX(), 0);
     BOOST_CHECK_EQUAL(chain->getPoint(0)->getY(), 1);
@@ -103,19 +106,20 @@ BOOST_AUTO_TEST_CASE(SimpleVerticalLineRecalculation)
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getX(), 0);
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getY(), 3);
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getZ(), 0);
-}
 
+    delete chain;
+    delete cPlane;
+}
 
 BOOST_AUTO_TEST_CASE(HeavyLineRecalculation)
 { 
     auto plane = PlaneStrategy::getInstance();
-    auto chain = Chain::getInstance();
+    Chain *chain = new Chain();
     auto cPlane = new ContinuousPlane();
-    auto chainRecalculator = new FixedDistanceChainRecalculator();
-    chain->clearChain();
+    AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
+    
     cPlane->setFunction(exampleFunction);
     plane->setStrategy(cPlane);
-    chain->setChainRecalculator(chainRecalculator);
     chain->setFirst(new Point(-3, 2, 0));
     chain->setLast(new Point(3, 2, 0));
   
@@ -127,7 +131,9 @@ BOOST_AUTO_TEST_CASE(HeavyLineRecalculation)
         chain->addToChain(new MovingImage(-3.0 + dx * (i + 1.0), 2, 0));
     }
     
-    chain->resetImages();
+    Chain temp = chainRecalculator->recalculateChain(chain);
+    chain->setCopy(&temp);
+
     double error = 1;
 
     for(int i=0;i<amount;i++)
@@ -146,13 +152,12 @@ BOOST_AUTO_TEST_CASE(HeavyLineRecalculation)
 BOOST_AUTO_TEST_CASE(HeavyLineRecalculationMove)
 { 
     auto plane = PlaneStrategy::getInstance();
-    auto chain = Chain::getInstance();
+    Chain *chain = new Chain();
     auto cPlane = new ContinuousPlane();
-    auto chainRecalculator = new FixedDistanceChainRecalculator();
-    chain->clearChain();
+    AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
+    
     cPlane->setFunction(exampleFunction);
     plane->setStrategy(cPlane);
-    chain->setChainRecalculator(chainRecalculator);
     chain->setFirst(new Point(-3, 2, 0));
     chain->setLast(new Point(3, 2, 0));
   
@@ -165,7 +170,9 @@ BOOST_AUTO_TEST_CASE(HeavyLineRecalculationMove)
         chain->addToChain(new MovingImage(-3.0 + dx * (i + 1.0) + er, 2, 0));
     }
     
-    chain->resetImages();
+    Chain temp = chainRecalculator->recalculateChain(chain);
+    chain->setCopy(&temp);
+
     double error = 1;
 
     for(int i=0;i<amount;i++)
@@ -183,13 +190,12 @@ BOOST_AUTO_TEST_CASE(HeavyLineRecalculationMove)
 BOOST_AUTO_TEST_CASE(HeavyLineRecalculationBothAxes)
 { 
     auto plane = PlaneStrategy::getInstance();
-    auto chain = Chain::getInstance();
+    Chain *chain = new Chain();
     auto cPlane = new ContinuousPlane();
-    auto chainRecalculator = new FixedDistanceChainRecalculator();
-    chain->clearChain();
+    AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
+    
     cPlane->setFunction(exampleFunction);
     plane->setStrategy(cPlane);
-    chain->setChainRecalculator(chainRecalculator);
     chain->setFirst(new Point(-5, -2, 0));
     chain->setLast(new Point(5, 2, 0));
   
@@ -202,7 +208,9 @@ BOOST_AUTO_TEST_CASE(HeavyLineRecalculationBothAxes)
         chain->addToChain(new MovingImage(-5.0 + dx * (i + 1), -2.0 + dy * (i + 1),  0));
     }
     
-    chain->resetImages();
+    Chain temp = chainRecalculator->recalculateChain(chain);
+    chain->setCopy(&temp);
+
     double error = 1;
 
     for(int i=0;i<amount;i++)
@@ -221,20 +229,20 @@ BOOST_AUTO_TEST_CASE(HeavyLineRecalculationBothAxes)
 BOOST_AUTO_TEST_CASE(SimpleCurveRecalculation)
 {
     auto plane = PlaneStrategy::getInstance();
-    auto chain = Chain::getInstance();
+    Chain *chain = new Chain();
     auto cPlane = new ContinuousPlane();
-    auto chainRecalculator = new FixedDistanceChainRecalculator();
-    chain->clearChain();
+    AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
+    
     cPlane->setFunction(exampleFunction);
     plane->setStrategy(cPlane);
-    chain->setChainRecalculator(chainRecalculator);
     chain->setFirst(new Point(-3, 2, 0));
     chain->setLast(new Point(3, 2, 0));
     chain->addToChain(new MovingImage(-2, 1, 0));
     chain->addToChain(new MovingImage(0, 0, 0));
     chain->addToChain(new MovingImage(2, 1, 0));
 
-    chain->resetImages();
+    Chain temp = chainRecalculator->recalculateChain(chain);
+    chain->setCopy(&temp);
 
     double error = 10;
 
@@ -254,13 +262,12 @@ BOOST_AUTO_TEST_CASE(SimpleCurveRecalculation)
 BOOST_AUTO_TEST_CASE(MediumCurveRecalculation)
 { 
     auto plane = PlaneStrategy::getInstance();
-    auto chain = Chain::getInstance();
+    Chain *chain = new Chain();
     auto cPlane = new ContinuousPlane();
-    auto chainRecalculator = new FixedDistanceChainRecalculator();
-    chain->clearChain(); //need for tests because of singleton
+    AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
+    
     cPlane->setFunction(exampleFunction);
     plane->setStrategy(cPlane);
-    chain->setChainRecalculator(chainRecalculator);
     chain->setFirst(new Point(-3, 2, 0));
     chain->setLast(new Point(3, 2, 0));
     chain->addToChain(new MovingImage(-2.5, 1.5, 0));
@@ -272,7 +279,8 @@ BOOST_AUTO_TEST_CASE(MediumCurveRecalculation)
     chain->addToChain(new MovingImage(1.5,  0.8, 0));
     chain->addToChain(new MovingImage(2,    1,   0));
     chain->addToChain(new MovingImage(2.5,  1.5, 0));
-    chain->resetImages();
+    Chain temp = chainRecalculator->recalculateChain(chain);
+    chain->setCopy(&temp);
 
     double error = 10;
 
@@ -317,13 +325,12 @@ BOOST_AUTO_TEST_CASE(NanVerification)
 {
 
     auto plane = PlaneStrategy::getInstance();
-    auto chain = Chain::getInstance();
+    Chain *chain = new Chain();
     auto cPlane = new ContinuousPlane();
-    auto chainRecalculator = new FixedDistanceChainRecalculator();
-    chain->clearChain(); //need for tests because of singleton
+    AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
+    
     cPlane->setFunction(exampleFunction);
     plane->setStrategy(cPlane);
-    chain->setChainRecalculator(chainRecalculator);
     chain->setFirst(new Point(-2.3, 0, 1.13846));
     chain->setLast(new Point(2.3, 0, -0.600892));
     chain->addToChain(new MovingImage(-2.21443, 1.32455, 2.47805));
@@ -331,7 +338,8 @@ BOOST_AUTO_TEST_CASE(NanVerification)
     chain->addToChain(new MovingImage(0.170001, 2.56238, -0.0307538));
     chain->addToChain(new MovingImage(1.44751, 2.2412, -0.0844369));
     chain->addToChain(new MovingImage(1.98865, 1.08761, -0.291743));
-    chain->resetImages();
+    Chain temp = chainRecalculator->recalculateChain(chain);
+    chain->setCopy(&temp);
     
     double error =10000;
 
@@ -355,4 +363,4 @@ BOOST_AUTO_TEST_CASE(NanVerification)
     BOOST_CHECK_SMALL(chain->getPoint(4)->getY(), 0.1);
     BOOST_CHECK_SMALL(chain->getPoint(4)->getZ(), 0.1);
 }
-
+// */

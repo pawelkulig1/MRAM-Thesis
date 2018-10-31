@@ -18,7 +18,8 @@ Pipe::~Pipe()
 
 bool Pipe::create(std::string)
 {
-    
+    //TODO       
+    return 1;
 }
 
 bool Pipe::checkIfExists(std::string filename)

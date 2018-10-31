@@ -1,4 +1,5 @@
 #include "Point.h"
+#include <math.h>
 
 using namespace GNEB;
 
@@ -49,10 +50,15 @@ Eigen::Vector3d Point::getVector()
     return Eigen::Vector3d(x,y,z);
 }
 
-/*double Point::getDistance(Point *p1, Point *p2)
+double Point::distanceBetweenPoints2D(Point *p1, Point *p2)
 {
-    return sqrt(pow(p1->getX() - p2->getX(), 2) + pow(p1->getY() - p2->getY(), 2));
-}*/
+    return sqrt(pow(p1->x - p2->x, 2) + pow(p1->y - p2->y, 2));
+}
+
+double Point::distanceBetweenPoints3D(Point *p1, Point *p2)
+{
+    return sqrt(pow(p1->x - p2->x, 2) + pow(p1->y - p2->y, 2) + pow(p1->z - p2->z, 2));
+}
 
 bool Point::operator==(Point p)
 {

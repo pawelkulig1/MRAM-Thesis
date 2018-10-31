@@ -5,8 +5,8 @@ using namespace GNEB;
 MovingImage::MovingImage(double x, double y, double z): Point(x, y, z) 
 {
     kappa = 1; 
-    next = nullptr;
-    previous = nullptr;    
+//    next = nullptr;
+//    previous = nullptr;    
     calculateDerivative();
 }
 
@@ -60,21 +60,12 @@ void MovingImage::moveByVector(const Eigen::Vector3d v)
 
 void MovingImage::moveByTotalForce()
 {
+    print();
     auto plane = PlaneStrategy::getInstance();
     this->x += NEBForce[0];
     this->y += NEBForce[1];
     this->z = plane->getZ(x, y);
     calculateDerivative();
-}
-
-void MovingImage::setNext(Point *p)
-{
-    this->next = p;
-}
-
-void MovingImage::setPrevious(Point *p)
-{
-    this->previous = p;
 }
 
 void MovingImage::print()

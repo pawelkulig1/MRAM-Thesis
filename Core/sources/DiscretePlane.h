@@ -18,7 +18,7 @@ namespace GNEB
         std::deque<std::deque<Point>> points;
     public:
         DiscretePlane();
-        
+        ~DiscretePlane();       
         Eigen::Vector3d calculateDerivative(double x, double y) override;
         Eigen::Vector3d calculateDerivative(Point *p) override;
         

@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(testChainInterpolation)
     
 
     auto it = c->begin();
-    auto temp = plane->getPointXY(8, 2);
+    auto temp = plane->getClosestPoint(8, 2);
     BOOST_CHECK_EQUAL(it++->getVector(), temp->getVector());
     
     temp = plane->getPointXY(8, 3);

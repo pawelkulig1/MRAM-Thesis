@@ -5,46 +5,31 @@
 
 using namespace GNEB;
 
-Chain *Chain::instance = nullptr;
-
-Chain *Chain::getInstance()
+Chain::Chain()
 {
-	if(!instance)
-		instance = new Chain();
-	return instance;
+    
 }
 
 MovingImage *Chain::getPoint(unsigned int number)
 {
 	if(number >= chain.size())
 		throw("Chain::getPoint() to high index: " + std::to_string(number));
-    if(number < 0)
-		throw("Chain::getPoint() to low index: " + std::to_string(number));
-    //if(number == -1)
-    //    return first;
-    //if(number == chain.size())
-    //    return last;
-	return &chain[number];
+	return static_cast<MovingImage *>(&chain[number]);
 }
 
 void Chain::addToChain(MovingImage *p)
 {
     auto *plane = PlaneStrategy::getInstance();
     auto TempPoint = plane->getClosestPoint(p->getX(), p->getY());
-
+   
     p->setX(TempPoint->getX());
     p->setY(TempPoint->getY());
     p->setZ(TempPoint->getZ());
-    if(chain.size() == 0)
-        p->setPrevious(static_cast<Point *> (first));
-    else
-    {
-        p->setPrevious(static_cast<Point *>(&chain[chain.size()-1]));
-        chain[chain.size()-1].setNext(p);   
-    }
-    p->setNext(static_cast<Point *>(last));
 
-	chain.push_back(*p);
+    //std::deque<Point>::iterator it = chain.end() - 1;
+    //chain.insert(it, *p);
+    chain.push_back(*p);
+    delete TempPoint;
 }
 
 std::deque<MovingImage>::iterator Chain::begin()
@@ -95,11 +80,6 @@ StationaryImage *Chain::getLast()
     return last;
 }
 
-void Chain::setChainRecalculator(AbstractChainRecalculator *cr)
-{
-    this->recalculator = cr;
-}
-
 void Chain::calculateInterpolation(const int Q)
 {
     chain.erase(chain.begin(), chain.end());
@@ -111,26 +91,31 @@ void Chain::calculateInterpolation(const int Q)
 		temp = R1 + v * (RQ - R1) / (Q+1);
 		addToChain(new MovingImage(temp[0], temp[1], temp[2]));
 	}
-    chain[chain.size() - 1].setNext(last);
-
 }
 
-double Chain::length()
-{
+double Chain::length2D()
+{ 
     double length = 0;
-    length += recalculator->distanceBetweenPoints3D(first, &chain[0]);
+    length += Point::distanceBetweenPoints2D(first, &chain[0]);
+    length += Point::distanceBetweenPoints2D(last, &chain[chain.size() - 1]);
     for(int i=0;i<size()-1;i++)
     {
-        length += recalculator->distanceBetweenPoints3D(&chain[i], &chain[i+1]);
+        length += Point::distanceBetweenPoints2D(&chain[i], &chain[i+1]);
     }
-    length += recalculator->distanceBetweenPoints3D(last, &chain[size()-1]);
-
     return length;
 }
 
-void Chain::resetImages()
+double Chain::length3D()
 {
-    chain = recalculator->recalculateChain();
+    double length = 0;
+    length += Point::distanceBetweenPoints3D(first, &chain[0]);
+    length += Point::distanceBetweenPoints3D(last, &chain[chain.size() - 1]);
+    for(int i=0;i<size()-1;i++)
+    {
+        length += Point::distanceBetweenPoints3D(&chain[i], &chain[i+1]);
+    }
+
+    return length;
 }
 
 int Chain::size()
@@ -140,13 +125,12 @@ int Chain::size()
 
 void Chain::print()
 {
-    first->print();
-
+    std::cout<<"["<<first->getX()<<", "<<first->getY()<<", "<<first->getZ()<<"]"<<std::endl;
     for(int i=0;i<chain.size();i++)
     {
         std::cout<<"["<<chain[i].getX()<<", "<<chain[i].getY()<<", "<<chain[i].getZ()<<"]"<<std::endl;
     }
-    last->print();
+    std::cout<<"["<<last->getX()<<", "<<last->getY()<<", "<<last->getZ()<<"]"<<std::endl;
 }
 
 std::string Chain::stringify()
@@ -163,8 +147,26 @@ std::string Chain::stringify()
 
 }
 
-void Chain::clearChain()
+void Chain::erase()
 {
     chain.erase(chain.begin(), chain.end());
 }
+
+Point* Chain::at(int n)
+{
+    return &chain[n];
+}
+
+void Chain::setCopy(Chain *c)
+{
+    erase();
+    for(int i=0;i<c->size();i++)
+    {
+        this->chain.push_back(c->chain[i]);
+    }
+    this->first = c->getFirst(); 
+    this->last = c->getLast();
+}
+
+
 

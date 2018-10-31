@@ -10,22 +10,22 @@ main: $(FILES) main.cpp
 	$(CXX) -o main.o main.cpp $(FILES) $(LIBS) $(FLAGS)
 	$(shell make gt)
 
-test: testFixedDistance
-	#./tests/testChain.o
-	./tests/testFixedDistance.o
+test: testChain.o testFixedDistance.o
+	$(CXX) -o tests/mainSuite.o tests/main.cpp $(FILES) $(LIBS) 
+	./tests/mainSuite.o
 
-testChain: main.o tests/test2.cpp $(FILES)
-	$(CXX) -o tests/test.o tests/test2.cpp $(FILES) $(TEST_FLAGS) $(LIBS)
-	./tests/testChain.o
+testChain.o: tests/testChain.cpp $(FILES)
+	$(CXX) -o tests/testChain.o tests/testChain.cpp $(FILES) $(TEST_FLAGS) $(LIBS) -c
 
-testFixedDistance: tests/testFixedDistance.cpp $(FILES)
-	$(CXX) -o tests/testFixedDistance.o tests/testFixedDistance.cpp $(FILES) $(TEST_FLAGS) $(LIBS) -g
+testFixedDistance.o: tests/testFixedDistance.cpp $(FILES)
+	$(CXX) -o tests/testFixedDistance.o tests/testFixedDistance.cpp $(FILES) $(TEST_FLAGS) $(LIBS) -c
 
 outs/%.o: sources/%.cpp sources/%.h;
 	$(CXX) -c $< $(LIBS) $(FLAGS) -o $@
 
 clean:
 	rm outs/*.o
+	rm tests/*.o
 
 gt: $(FILES) main.cpp 
 	find sources -name "*.cpp" -or -name "*.h" > gtagsFiles;

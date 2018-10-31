@@ -22,7 +22,7 @@ namespace Parser
         void incrementer(int &poz1, int &poz2, std::string &temp);
     public:
 		PlainDataParser(std::string filename);
-		void parse(std::deque<std::deque<Point>> *p);
+		void parse(std::deque<std::deque<Point> > *p);
 		int getXSize();
 		int getYSize();
 		double getXpos();

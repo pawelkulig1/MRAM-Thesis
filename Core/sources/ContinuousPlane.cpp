@@ -72,15 +72,3 @@ void ContinuousPlane::setFunction(std::function<double (double, double)> f)
 {
     this->planeFunction = f;
 }
-
-
-/*double ContinuousPlane::getDx()
-{
-    return dx;
-}
-
-double ContinuousPlane::getDy()
-{
-    return dy;
-}
-*/

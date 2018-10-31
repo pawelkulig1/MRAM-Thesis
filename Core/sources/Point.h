@@ -26,10 +26,8 @@ namespace GNEB
         virtual std::string stringify();
         virtual ~Point(){};
 
-        //static double getDistance(Point *p1, Point *p2);
-        //
-        //void setX_h(Point *p);
-        //void setY_h(Point *p);
+        static double distanceBetweenPoints2D(Point *p1, Point *p2);
+        static double distanceBetweenPoints3D(Point *p1, Point *p2);
 
         Eigen::Vector3d getVector();
         bool operator==(Point p);

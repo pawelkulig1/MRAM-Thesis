@@ -122,3 +122,7 @@ void DiscretePlane::setYnum(int ynum)
 {
     this->ynum = ynum;
 }
+
+DiscretePlane::~DiscretePlane()
+{
+}

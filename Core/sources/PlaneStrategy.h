@@ -12,13 +12,14 @@ namespace GNEB
     private:
         static PlaneStrategy *instance;
         AbstractPlane *strategy;
-        PlaneStrategy(){}
+        PlaneStrategy();
 
     public:
         static PlaneStrategy *getInstance();
         void setStrategy(AbstractPlane *pl);
         AbstractPlane *getStrategy();
 
+        void throwIfStrategyNotSet();
         Eigen::Vector3d calculateDerivative(double x, double y);
         Eigen::Vector3d calculateDerivative(Point *p);
         double getZ(Point *p);

@@ -2,6 +2,7 @@
 #include <deque>
 #include <functional>
 #include "MovingImage.h"
+#include "Chain.h"
 
 namespace GNEB
 {
@@ -11,12 +12,10 @@ namespace GNEB
     class AbstractChainRecalculator
     {
     protected:
-        std::deque<MovingImage> chainCopy;
+        Chain chainCopy;
+        Chain *originalChain;
     public:
-        static double distanceBetweenPoints2D(Point *p1, Point *p2);
-        static double distanceBetweenPoints3D(Point *p1, Point *p2);
-        virtual std::function<double(double)> getFunctionConnectingPoints(Point *p1, Point *p2) = 0;
-        virtual std::deque<MovingImage> recalculateChain() = 0;
+        virtual Chain recalculateChain(Chain *originalChain) = 0;
     };
 }
 
