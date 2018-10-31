@@ -51,7 +51,7 @@ def readFromPipe(name):
 
 x = True
 data = []
-for i in range(30):
+for i in range(13):
 	x = readFromPipe("plotFIFO")
 
 	# print("' ", x, "'")
@@ -97,43 +97,20 @@ for i, e in enumerate(data):
 
 	# for i, line in enumerate(data):
 	# 	Gaussian = Gaussian3D(line[1], line[2], line[3], line[4], 10, 0.1)
-	# 	Z += Gaussian.getGaussianData()
+        # 	Z += Gaussian.getGaussianData()
 
 	# X, Y = np.meshgrid(X, Y)
+	if i % 1 == 0:
+	    p = dg.Plane(-5, 5, 0.1)
+	    p.generatePlane()
 
-	p = dg.Plane(-5, 5, 0.1)
-	p.generatePlane()
-	
-	plt.subplot(311)
-	# plt.contourf(X, Y, Z, cmap=cm.RdYlGn_r)
-	plt.contourf(*p.exportPlotData(), cmap=cm.RdYlGn_r)
-	plt.scatter(*getXYArray(Points), color="r")
-	plt.xlim(-5, 5)
+	    #plt.subplot(311)
+	    # plt.contourf(X, Y, Z, cmap=cm.RdYlGn_r)
+	    plt.contourf(*p.exportPlotData(), cmap=cm.RdYlGn_r)
+	    plt.scatter(*getXYArray(Points), color="r")
+	    plt.xlim(-5, 5)
 
-	plt.subplot(312)
-	plt.title("deriv")
-	# plt.contourf(X, Y, Z, cmap=cm.RdYlGn_r)
-	plt.contourf(*p.exportPlotData(), cmap=cm.RdYlGn_r)
-	Points = Points[1:-1]
-	plt.scatter(*getXYArray(Points), color="r")
-	# # plt.quiver(*getXYArray(Points),0, *getXYArray(Points, 1),0, scale = 1)
-	# print("second plot: ", Points[1:-1], Points)
-	
-	plt.quiver(*getXYArray(Points), *getXYArray(Points, 1), units="xy", scale=1)
-	plt.xlim(-5, 5)	
-	plt.ylim(-5, 5)	
-
-	plt.subplot(313)
-	plt.title("spring force")
-	# plt.contourf(X, Y, Z, cmap=cm.RdYlGn_r)
-	plt.contourf(*p.exportPlotData(), cmap=cm.RdYlGn_r)
-	# Points = Points[1:-1]
-	plt.scatter(*getXYArray(Points), color="r")
-	plt.quiver(*getXYArray(Points), *getXYArray(Points, 2), units="xy")
-	plt.xlim(-5, 5)
-	plt.ylim(-5, 5)
-	
-	plt.show()
+	    plt.show()
 
 
 # (-A*B*y0 - A*C + B^2*x0 - B*sqrt(A^2*r^2 - A^2*x0^2 - 2*A*B*x0*y0 - 2*A*C*x0 + B^2*r^2 - B^2*y0^2 - 2*B*C*y0 - C^2))/(A^2 + B^2)

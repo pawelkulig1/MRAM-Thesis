@@ -48,8 +48,9 @@ int main()
      
     Pipe *pipe = new Pipe("../PythonVisualisation/plotFIFO");
     pipe->write(c->stringify());
-    for(int i=0;i<60;i++)
+    for(int i=0;i<13;i++)
     {
+        std::cout<<"ITERATION: " << i << std::endl;
         for(auto it=c->begin();it<c->end();it++)
         {
             it->iterate();
@@ -58,9 +59,9 @@ int main()
         {
             it->moveByTotalForce();
         }
-        c->print();
+        //c->print();
         c->resetImages();
-        c->print();
+        //c->print();
         pipe->write(c->stringify());
     }
 

@@ -4,7 +4,6 @@ using namespace GNEB;
 
 MovingImage::MovingImage(double x, double y, double z): Point(x, y, z) 
 {
-    double dx, dy;
     kappa = 1; 
     next = nullptr;
     previous = nullptr;    

@@ -118,12 +118,12 @@ void Chain::calculateInterpolation(const int Q)
 double Chain::length()
 {
     double length = 0;
-    length += recalculator->distanceBetweenPoints(first, &chain[0]);
+    length += recalculator->distanceBetweenPoints3D(first, &chain[0]);
     for(int i=0;i<size()-1;i++)
     {
-        length += recalculator->distanceBetweenPoints(&chain[i], &chain[i+1]);
+        length += recalculator->distanceBetweenPoints3D(&chain[i], &chain[i+1]);
     }
-    length += recalculator->distanceBetweenPoints(last, &chain[size()-1]);
+    length += recalculator->distanceBetweenPoints3D(last, &chain[size()-1]);
 
     return length;
 }

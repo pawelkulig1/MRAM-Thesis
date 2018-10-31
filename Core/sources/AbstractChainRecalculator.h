@@ -13,7 +13,8 @@ namespace GNEB
     protected:
         std::deque<MovingImage> chainCopy;
     public:
-        static double distanceBetweenPoints(Point *p1, Point *p);
+        static double distanceBetweenPoints2D(Point *p1, Point *p2);
+        static double distanceBetweenPoints3D(Point *p1, Point *p2);
         virtual std::function<double(double)> getFunctionConnectingPoints(Point *p1, Point *p2) = 0;
         virtual std::deque<MovingImage> recalculateChain() = 0;
     };
