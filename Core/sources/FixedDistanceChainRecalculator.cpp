@@ -197,6 +197,5 @@ Chain FixedDistanceChainRecalculator::recalculateChain(Chain *originalChain)
         }
         chainCopy.getPoint(i)->moveToCords(tempVec[0], tempVec[1]);
     }
-    chainCopy.print();
     return chainCopy;
 }

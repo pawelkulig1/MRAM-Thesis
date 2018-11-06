@@ -60,7 +60,6 @@ void MovingImage::moveByVector(const Eigen::Vector3d v)
 
 void MovingImage::moveByTotalForce()
 {
-    print();
     auto plane = PlaneStrategy::getInstance();
     this->x += NEBForce[0];
     this->y += NEBForce[1];

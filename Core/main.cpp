@@ -12,14 +12,14 @@ using namespace GNEB;
 double func(double x, double y)
 {
     double data[6][4] = {
-        {5, 1, 0, 0},
-        {-1, 1, -2, 0},
-        {-1, 1, 2, 0},
-        {1, 1, 0, 1},
-        {-1, 1, 0, -1},
-        {3, 1,  2,  -1}
+        {25, 1, 0, 0},
+        {-10, 1, -2.3, 0},
+        {-10, 1, 2.3, 0},
+        {0, 1, 0, 1},
+        {0, 1, 0, -1},
+        {25, 1,  2,  -1}
     };
-
+    //height, width, x , y
 
     double out = 0;
     for(int i=0;i<6;i++)
@@ -41,17 +41,18 @@ int main()
     auto cRecalculator = new FixedDistanceChainRecalculator();
     chain->setFirst(new Point(-2.3, 0, plane->getZ(-2.3, 0)));
     chain->setLast(new Point(2.3, 0, plane->getZ(2.3, 0)));
-    chain->calculateInterpolation(5);
+    chain->calculateInterpolation(7);
 
-     
     //Pipe *pipe = new Pipe("../PythonVisualisation/plotFIFO");
-    //pipe->write(c->stringify());
+    //pipe->write(chain->stringify());
     //
-    Chain *chainMemento = new Chain();
+    std::vector<Chain> mementoStorage;
+    
+    int N = 30;
 
-    for(int i=0;i<20;i++)
+    int i=0;
+    while(i < 10000)
     {
-        chainMemento->setCopy(chain);
         std::cout<<"ITERATION: " << i << std::endl;
 
         for(int i=0;i<chain->size();i++)
@@ -62,19 +63,67 @@ int main()
         {
             chain->getPoint(i)->moveByTotalForce();
         }
-        chain->print();
         
         Chain temp = cRecalculator->recalculateChain(chain);
-        if(chainMemento.length() < chain.length())
-            chain->setCopy(&temp);
+
+        double max = 0;
+        if(i > N)
+        {
+            for(int j=0;j<N;j++)
+            {
+                if(mementoStorage[i - j - 2].length3D() > max)
+                    max = mementoStorage[i - j - 2].length3D();
+            }
+        }
         else
+            max = 100;
+
+        std::cout<<"MAX: "<<max<<std::endl;
+        if(max >= temp.length3D())
+        {
+            chain->setCopy(&temp);
+            chain->print();
+            std::cout<<"this one: "<<chain->length3D()<<std::endl;
+            //pipe->write(chain->stringify());
+        }
+        else
+        {
+            std::cout<<"break happened"<<std::endl;
+            //find min
+            Chain min = Chain();
+            min.setCopy(&mementoStorage[0]);
+
+            for(Chain c: mementoStorage)
+            {
+                if(c.length3D() < min.length3D())
+                {
+                    min.setCopy(&c);
+                }
+
+            }
+            chain->setCopy(&min);
+            std::cout<<"algorithms ends after: " << i <<" iterations."<<std::endl;
             break;
-        //pipe->write(c->stringify());
+        }
+
+        mementoStorage.push_back(*chain);
+        for(int k=0; k< i;k++)
+        {
+            std::cout<<"score: "<<mementoStorage[k].length3D();
+        }
+        
+        i++;
     }
 
     std::cout<<"===================="<<std::endl;
-
+    for(Chain c: mementoStorage)
+    {
+        std::cout<<c.length3D()<<std::endl;
+    }
+    std::cout<<"===================="<<std::endl;
+    std::cout<<"len: " << chain->length3D()<<std::endl;
     chain->print();
+    //pipe->write(chain->stringify());
     //delete pipe;
     return 0;
 }
