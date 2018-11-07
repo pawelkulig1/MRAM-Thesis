@@ -4,7 +4,7 @@
 #include "StationaryImage.h"
 #include <time.h>
 
-#define DEBUG true
+#define DEBUG false
 
 FixedDistanceChainRecalculator::FixedDistanceChainRecalculator() : AbstractChainRecalculator()
 {
@@ -13,7 +13,7 @@ FixedDistanceChainRecalculator::FixedDistanceChainRecalculator() : AbstractChain
 
 Chain FixedDistanceChainRecalculator::findNumberOfFunction(int pointNumber, Chain chain)
 {
-    if(pointNumber == chain.size() - 1)
+    if(pointNumber > chain.size() - 1)
         return chain;
     //auto chain = Chain::getInstance();
     StationaryImage *first = chain.getFirst();
@@ -89,37 +89,55 @@ Chain FixedDistanceChainRecalculator::findNumberOfFunction(int pointNumber, Chai
     if(outPoint1 != Eigen::Vector3d(-999.999, -999.999, -999.999))
     {
         chain.getPoint(pointNumber)->moveToCords(outPoint1[0], outPoint1[1]);
-        std::cout<<"outPoint1 if: "<<std::endl;
-        //chain.print();
+        if(DEBUG)
+        {
+            std::cout<<"outPoint1 if: "<<std::endl;
+            chain.print();
+        }
         temp = findNumberOfFunction(pointNumber + 1, chain);
-        if(temp.getPoint(0)->getX() != -999.999 && temp.getPoint(0)->getY() != -999.999)
-            return chain;
+        if(checkChainIntegrity(temp))
+        {
+            return temp;
+        }
     }
-    else
-    { 
-        chain.getPoint(0)->moveToCords(outPoint1[0], outPoint1[1]);
-    }
-
     
     if(outPoint2 != Eigen::Vector3d(-999.999, -999.999, -999.999))
     { 
         chain.getPoint(pointNumber)->moveToCords(outPoint2[0], outPoint2[1]);
-        std::cout<<"outPoint2 if: "<<std::endl;
-        //chain.print();
+        if(DEBUG)
+        {
+            std::cout<<"outPoint2 if: "<<std::endl;
+            chain.print();
+        }
         
         temp = findNumberOfFunction(pointNumber + 1, chain);
-        if(temp.getPoint(0)->getX() != -999.999 && temp.getPoint(0)->getY() != -999.999)
-            return chain;
-    }
-    else
-    { 
-        chain.getPoint(0)->moveToCords(outPoint2[0], outPoint2[1]);
+        if(checkChainIntegrity(temp))
+            return temp;
     }
 
     return chain;
 }
 
+bool FixedDistanceChainRecalculator::checkChainIntegrity(Chain c)
+{
+    double error = 0.3;
+    double dl = c.length2D()/(c.size()+1);
+    if((Point::distanceBetweenPoints2D(c.getFirst(), c.getPoint(0)) + error) < dl ||
+           (Point::distanceBetweenPoints2D(c.getFirst(), c.getPoint(0)) - error) > dl) 
+        return false;
 
+    if((Point::distanceBetweenPoints2D(c.getLast(), c.getPoint(c.size() - 1)) + error) < dl ||
+           (Point::distanceBetweenPoints2D(c.getLast(), c.getPoint(c.size() - 1)) - error) > dl) 
+        return false;
+    for(int i=0;i<c.size() - 1 ;i++)
+    {
+        if((Point::distanceBetweenPoints2D(c.getPoint(i), c.getPoint(i + 1)) + error) < dl ||
+           (Point::distanceBetweenPoints2D(c.getPoint(i), c.getPoint(i + 1)) - error) > dl) 
+        return false;
+    }
+
+    return true;
+}
 
 
 Eigen::Vector3d FixedDistanceChainRecalculator::getDistantPointOnFunction(double len, Point *p1, Point *p2, Point *lPoint)
@@ -147,18 +165,21 @@ Eigen::Vector3d FixedDistanceChainRecalculator::getDistantPointOnFunction(double
     
     if(DEBUG)
     {
-/*        std::cout<<"A: " << A <<" B: " << B << " C: " << C << " x0: " << x0 << " y0: " << y0 << "under sqrt: " << underSqrt <<std::endl;
+        std::cout<<"A: " << A <<" B: " << B << " C: " << C << " x0: " << x0 << " y0: " << y0 << "under sqrt: " << underSqrt <<std::endl;
         std::cout<<"p1:";
         p1->print();
         std::cout<<"p2: ";
         p2->print();
         std::cout<<"lPoint: ";
-        lPoint->print();*/
+        lPoint->print();
     }
     if(underSqrt < 0) //possible if there are no such points on real plane - this meand previous point was set incorectly
     {
         //throw std::string("NaN value");
-        std::cout<<"BACK IN TIME"<<std::endl;
+        if(DEBUG)
+        {
+            std::cout<<"BACK IN TIME"<<std::endl;
+        }
         return Eigen::Vector3d(-999.999, -999.999, -999.999);
     }
 
@@ -173,7 +194,7 @@ Eigen::Vector3d FixedDistanceChainRecalculator::getDistantPointOnFunction(double
 
     if(DEBUG)
     {
-    //    std::cout<<"x1: "<<x1 << " y1 :" << y1 << " x2: " << x2 << " y2: " << y2<<std::endl;
+        std::cout<<"x1: "<<x1 << " y1 :" << y1 << " x2: " << x2 << " y2: " << y2<<std::endl;
     }
     Eigen::Vector3d chainDirection = getChainDirection(); //to pick one solution i decided to use chainDirection algorithm, in most cases it fits.
 
@@ -230,8 +251,8 @@ Eigen::Vector3d FixedDistanceChainRecalculator::getDistantPointOnFunction(double
             }
         }
     }
-    //if(DEBUG)
-    //    std::cout<<"RET: "<<retX <<", "  << retY<<std::endl;   
+    if(DEBUG)
+        std::cout<<"RET: "<<retX <<", "  << retY<<std::endl;   
     return Eigen::Vector3d(retX, retY, 0);
 }
 
@@ -248,6 +269,6 @@ Chain FixedDistanceChainRecalculator::recalculateChain(Chain *originalChain)
     Eigen::Vector3d tempVec;
     Chain cp;
     cp.setCopy(originalChain);
-    findNumberOfFunction(0, cp);
-    return chainCopy;
+    return findNumberOfFunction(0, cp);
 }
+

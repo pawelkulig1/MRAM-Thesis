@@ -15,6 +15,7 @@ namespace GNEB
         //Point *x_h, *y_h;
     public:
         Point(double x, double y, double z);
+        Point(Eigen::Vector3d);
         Point();
         double getX();
         double getY();

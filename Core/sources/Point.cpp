@@ -15,6 +15,11 @@ Point::Point(double x, double y, double z): x(x), y(y), z(z)
     counter++;
 }
 
+Point::Point(Eigen::Vector3d vec): x(vec[0]), y(vec[1]), z(vec[2])
+{
+    counter++;
+}
+
 double Point::getX()
 {
     return Point::x;

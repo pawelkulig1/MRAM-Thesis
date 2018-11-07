@@ -40,6 +40,7 @@ namespace GNEB
         void erase();
 
         void setCopy(Chain *c);
+        void setCopy(Chain c);
         Point *at(int n);
 	};
 }

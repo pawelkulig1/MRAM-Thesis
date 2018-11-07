@@ -51,7 +51,7 @@ def readFromPipe(name):
 
 x = True
 data = []
-for i in range(10):
+for i in range(1):
 	x = readFromPipe("plotFIFO")
 
 	# print("' ", x, "'")
@@ -59,7 +59,7 @@ for i in range(10):
 		break
 	data.append(x)
 
-print("data[1]:", data[1])
+print("data[1]:", data[0])
 
 def parseCords(cords):
 	cords = cords.split(",")

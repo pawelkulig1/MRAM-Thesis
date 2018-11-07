@@ -12,6 +12,12 @@ Pipe::Pipe(std::string name): pipeName(name)
 
 Pipe::~Pipe()
 {
+    if(state != CLOSED)
+        close();
+}
+
+void Pipe::close()
+{
     write(";|;|;|");
     state = CLOSED;
 }
@@ -54,5 +60,6 @@ std::string Pipe::read()
     pipeHandle >> data;
 
     state = IDLE;
+    pipeHandle.close();
     return data;
 }

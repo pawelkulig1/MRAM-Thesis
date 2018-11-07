@@ -14,5 +14,7 @@ namespace GNEB
         Eigen::Vector3d getChainDirection();
         Chain findNumberOfFunction(int pointNumber, Chain chain);
         Chain recalculateChain(Chain *originalChain);
+        bool checkChainIntegrity(Chain c);
+
     };
 }

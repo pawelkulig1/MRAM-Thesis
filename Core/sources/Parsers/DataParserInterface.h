@@ -4,12 +4,12 @@
 
 namespace Parser
 {
-    class ParserInterface
+    class DataParserInterface
     {
     private:
         std::string filename;
         std::string configName;
-        sdt::fstream fileHandle;
+        std::fstream fileHandle;
     public:
         virtual void parseData() = 0;
         virtual void parseConfig() = 0;

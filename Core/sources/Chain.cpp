@@ -168,5 +168,15 @@ void Chain::setCopy(Chain *c)
     this->last = c->getLast();
 }
 
+void Chain::setCopy(Chain c)
+{
+    erase();
+    for(int i=0;i<c.size();i++)
+    {
+        this->chain.push_back(c.chain[i]);
+    }
+    this->first = c.getFirst(); 
+    this->last = c.getLast();
+}
 
 
