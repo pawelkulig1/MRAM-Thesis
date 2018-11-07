@@ -26,8 +26,6 @@ void Chain::addToChain(MovingImage *p)
     p->setY(TempPoint->getY());
     p->setZ(TempPoint->getZ());
 
-    //std::deque<Point>::iterator it = chain.end() - 1;
-    //chain.insert(it, *p);
     chain.push_back(*p);
     delete TempPoint;
 }

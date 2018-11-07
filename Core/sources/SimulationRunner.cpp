@@ -88,8 +88,6 @@ bool SimulationRunner::run()
             chain.getPoint(i)->moveByTotalForce();
         }
 
-       // Chain temp;
-        //temp.setCopy(cRecalc.recalculateChain(&chain));
         chain.setCopy(cRecalc->recalculateChain(&chain));
         addToStorage(chain);
 

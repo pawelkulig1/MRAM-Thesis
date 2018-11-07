@@ -2,7 +2,7 @@ CXX= g++
 FILES := $(patsubst sources/%.cpp,outs/%.o,$(wildcard sources/*.cpp))
 PARSERS:= $(patsubst sources/Parsers/%.cpp,outs/%.o,$(wildcard sources/Parsers/*.cpp))
 ALL_FILES:= $(FILES) $(PARSERS)
-FLAGS := --std=c++17 -Wall -pedantic -g
+FLAGS := --std=c++17 -Wall -pedantic 
 LIBS := -I/Parsers -I. -Ilibs/Eigen -Ilibs/boost
 OUT= main.o
 
@@ -12,15 +12,15 @@ main: $(ALL_FILES) main.cpp
 	$(CXX) -o main.o main.cpp $(ALL_FILES) $(LIBS) $(FLAGS)
 	$(shell make gt)
 
-test: testChain.o testFixedDistance.o
-	$(CXX) -o tests/mainSuite.o tests/main.cpp $(FILES) $(LIBS) 
+test: testChain.o testFixedDistance.o $(ALL_FILES)
+	$(CXX) -o tests/mainSuite.o tests/main.cpp $(ALL_FILES) $(LIBS) $(TEST_FLAGS) 
 	./tests/mainSuite.o
 
-testChain.o: tests/testChain.cpp $(FILES)
-	$(CXX) -o tests/testChain.o tests/testChain.cpp $(FILES) $(TEST_FLAGS) $(LIBS) -c
+testChain.o: tests/testChain.cpp $(ALL_FILES)
+	$(CXX) -o tests/testChain.o tests/testChain.cpp $(ALL_FILES) $(TEST_FLAGS) $(LIBS) -c
 
-testFixedDistance.o: tests/testFixedDistance.cpp $(FILES)
-	$(CXX) -o tests/testFixedDistance.o tests/testFixedDistance.cpp $(FILES) $(TEST_FLAGS) $(LIBS) -c
+testFixedDistance.o: tests/testFixedDistance.cpp $(ALL_FILES)
+	$(CXX) -o tests/testFixedDistance.o tests/testFixedDistance.cpp $(ALL_FILES) $(TEST_FLAGS) $(LIBS) -c
 
 outs/%.o: sources/%.cpp sources/%.h
 	$(CXX) -c $< $(LIBS) $(FLAGS) -o $@
