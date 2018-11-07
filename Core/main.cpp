@@ -9,6 +9,9 @@
 using namespace std;
 using namespace GNEB;
 
+#define PIPE false
+
+
 double func(double x, double y)
 {
     double data[6][4] = {
@@ -41,17 +44,20 @@ int main()
     auto cRecalculator = new FixedDistanceChainRecalculator();
     chain->setFirst(new Point(-2.3, 0, plane->getZ(-2.3, 0)));
     chain->setLast(new Point(2.3, 0, plane->getZ(2.3, 0)));
-    chain->calculateInterpolation(11);
+    chain->calculateInterpolation(3);
 
-    //Pipe *pipe = new Pipe("../PythonVisualisation/plotFIFO");
-    //pipe->write(chain->stringify());
+    Pipe pipe("../PythonVisualisation/plotFIFO");
+    if(PIPE)
+    {
+        pipe.write(chain->stringify());
+    }
     //
     std::vector<Chain> mementoStorage;
     
     int N = 30;
 
     int i=0;
-    while(i < 10000)
+    while(i < 50)
     {
         std::cout<<"ITERATION: " << i << std::endl;
 
@@ -85,7 +91,10 @@ int main()
             chain->setCopy(&temp);
             chain->print();
             std::cout<<"this one: "<<chain->length3D()<<std::endl;
-            //pipe->write(chain->stringify());
+            if(PIPE)
+            {
+                pipe.write(chain->stringify());
+            }
         }
         else
         {
@@ -124,7 +133,10 @@ int main()
     std::cout<<"===================="<<std::endl;
     std::cout<<"len: " << chain->length3D()<<std::endl;
     chain->print();
-    //pipe->write(chain->stringify());
-    //delete pipe;
+    if(PIPE)
+    {
+        pipe.write(chain->stringify());
+    }
+//    delete pipe;
     return 0;
 }
