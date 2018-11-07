@@ -359,8 +359,28 @@ BOOST_AUTO_TEST_CASE(NanVerification)
     BOOST_CHECK_CLOSE(chain->getPoint(3)->getY(), 0.314, error);
     BOOST_CHECK_CLOSE(chain->getPoint(3)->getZ(), 0, error);
     
-    BOOST_CHECK_SMALL(chain->getPoint(4)->getX(), 0.1);
-    BOOST_CHECK_SMALL(chain->getPoint(4)->getY(), 0.1);
-    BOOST_CHECK_SMALL(chain->getPoint(4)->getZ(), 0.1);
+    BOOST_CHECK_CLOSE(chain->getPoint(4)->getX(), 1.8699, error);
+    BOOST_CHECK_CLOSE(chain->getPoint(4)->getY(), 1.1305, error);
+    BOOST_CHECK_CLOSE(chain->getPoint(4)->getZ(), 0, error);
+}
+
+
+BOOST_AUTO_TEST_CASE(InifiniteLoopProblem)
+{
+
+    auto plane = PlaneStrategy::getInstance();
+    Chain *chain = new Chain();
+    auto cPlane = new ContinuousPlane();
+    AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
+    
+    cPlane->setFunction(exampleFunction);
+    plane->setStrategy(cPlane);
+    chain->setFirst(new Point(-2.3, 0, 0));
+    chain->setLast(new Point(2.3, 0, 0));
+
+    Chain temp = chainRecalculator->recalculateChain(chain);
+    chain->setCopy(&temp);
+    
+    double error =10000;
 }
 // */

@@ -2,6 +2,9 @@
 #include "Point.h"
 #include "Chain.h"
 #include "StationaryImage.h"
+#include <time.h>
+
+#define DEBUG true
 
 FixedDistanceChainRecalculator::FixedDistanceChainRecalculator() : AbstractChainRecalculator()
 {
@@ -30,6 +33,9 @@ Eigen::Vector3d FixedDistanceChainRecalculator::findNumberOfFunction(int pointNu
         distSum += Point::distanceBetweenPoints2D(chainCopy.at(i), chainCopy.at(i+1));
         i++;
     }
+
+    if(DEBUG)
+        std::cout<<"DL: " << dl << std::endl;
 
     //get proper output 
     Eigen::Vector3d outPoint;
@@ -92,7 +98,17 @@ Eigen::Vector3d FixedDistanceChainRecalculator::getDistantPointOnFunction(double
     }
 
     double underSqrt = pow(A, 2) * pow(len,2) - pow(A, 2) * pow(x0, 2) - 2 * A * B * x0 * y0 - 2 * A * C * x0 + pow(B, 2) * pow(len, 2) - pow(B, 2) * pow(y0, 2) - 2 * B * C * y0 - pow(C, 2);
-
+    
+    if(DEBUG)
+    {
+        std::cout<<"A: " << A <<" B: " << B << " C: " << C << " x0: " << x0 << " y0: " << y0 << "under sqrt: " << underSqrt <<std::endl;
+        std::cout<<"p1:";
+        p1->print();
+        std::cout<<"p2: ";
+        p2->print();
+        std::cout<<"lPoint: ";
+        lPoint->print();
+    }
     if(underSqrt < 0) //possible if there are no such points on real plane - this meand previous point was set incorectly
     {
         throw std::string("NaN value");
@@ -104,14 +120,17 @@ Eigen::Vector3d FixedDistanceChainRecalculator::getDistantPointOnFunction(double
     //final results: 
     double x1 = (-A * B * y0 - A * C + pow(B, 2) * x0 - B * repeatingPart)/(pow(A, 2) + pow(B, 2));
     double y1 = (pow(A, 2) * y0 - A * B * x0 + A * repeatingPart - B*C)/(pow(A, 2) + pow(B, 2));
-    double x2 = (-A * B * y0 - A * C + pow(B, 2) * x0 + B * repeatingPart)/(pow(A, 2) + 1);
+    double x2 = (-A * B * y0 - A * C + pow(B, 2) * x0 + B * repeatingPart)/(pow(A, 2) + pow(B, 2));
     double y2 = (pow(A, 2) * y0 - A * B * x0 - A * repeatingPart - B*C)/(pow(A, 2) + pow(B, 2));
 
+    if(DEBUG)
+    {
+        std::cout<<"x1: "<<x1 << " y1 :" << y1 << " x2: " << x2 << " y2: " << y2<<std::endl;
+    }
     Eigen::Vector3d chainDirection = getChainDirection(); //to pick one solution i decided to use chainDirection algorithm, in most cases it fits.
 
     double retX = 0;
     double retY = 0;
-    
     // two formulas so to versions of chainDirection algorithm (y and x asix)
     if(A == 1 && B != -1)
     {
@@ -163,7 +182,8 @@ Eigen::Vector3d FixedDistanceChainRecalculator::getDistantPointOnFunction(double
             }
         }
     }
-    
+    if(DEBUG)
+        std::cout<<"RET: "<<retX <<", "  << retY<<std::endl;   
     return Eigen::Vector3d(retX, retY, 0);
 }
 
@@ -187,9 +207,15 @@ Chain FixedDistanceChainRecalculator::recalculateChain(Chain *originalChain)
         {
             if(s == "NaN value") //last point was setup not properly, we have to correct it.
             {
-                std::cout<<"BACK IN TIME!"<<std::endl;
-                i--;
-                *chainCopy.getPoint(i) = *originalChain->getPoint(i); //for calculation we have to restore position of that point to initial value
+                if(DEBUG)
+                {
+                    std::cout<<"BACK IN TIME: "<< i <<std::endl;
+                    chainCopy.print();
+                    sleep(1);
+                }
+                i=0;
+                chainCopy.setCopy(originalChain);
+                //*chainCopy.getPoint(i) = *originalChain->getPoint(i); //for calculation we have to restore position of that point to initial value
                 normalMode = false; //inverses chainDirection algorithm, function will pick other point now
                 tempVec = findNumberOfFunction(i); //calculate once again.
                 normalMode = true; //disable inversion

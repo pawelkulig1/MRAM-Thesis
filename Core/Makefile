@@ -1,6 +1,6 @@
 CXX= g++
 FILES := $(patsubst sources/%.cpp,outs/%.o,$(wildcard sources/*.cpp))
-FLAGS := --std=c++17 -Wall -pedantic
+FLAGS := --std=c++17 -Wall -pedantic -g
 LIBS := -I/Parsers -I. -Ilibs/Eigen -Ilibs/boost
 OUT= main.o
 
@@ -21,7 +21,7 @@ testFixedDistance.o: tests/testFixedDistance.cpp $(FILES)
 	$(CXX) -o tests/testFixedDistance.o tests/testFixedDistance.cpp $(FILES) $(TEST_FLAGS) $(LIBS) -c
 
 outs/%.o: sources/%.cpp sources/%.h;
-	$(CXX) -c $< $(LIBS) $(FLAGS) -o $@
+	$(CXX) -c $< $(LIBS) $(FLAGS) -o $@ -g
 
 clean:
 	rm outs/*.o

@@ -2,3 +2,4 @@
 #include <boost/test/included/unit_test.hpp>
 #include "testChain.cpp"
 #include "testFixedDistance.cpp"
+#define DEBUG false

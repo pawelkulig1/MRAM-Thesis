@@ -41,7 +41,7 @@ int main()
     auto cRecalculator = new FixedDistanceChainRecalculator();
     chain->setFirst(new Point(-2.3, 0, plane->getZ(-2.3, 0)));
     chain->setLast(new Point(2.3, 0, plane->getZ(2.3, 0)));
-    chain->calculateInterpolation(7);
+    chain->calculateInterpolation(11);
 
     //Pipe *pipe = new Pipe("../PythonVisualisation/plotFIFO");
     //pipe->write(chain->stringify());
@@ -63,9 +63,10 @@ int main()
         {
             chain->getPoint(i)->moveByTotalForce();
         }
+        std::cout<<"BEFORE RECALCULATION: "<<std::endl;
+        chain->print();
         
         Chain temp = cRecalculator->recalculateChain(chain);
-
         double max = 0;
         if(i > N)
         {

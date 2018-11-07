@@ -51,7 +51,7 @@ def readFromPipe(name):
 
 x = True
 data = []
-for i in range(13):
+for i in range(10):
 	x = readFromPipe("plotFIFO")
 
 	# print("' ", x, "'")
