@@ -1,7 +1,9 @@
+#pragma once
 #define BOOST_TEST_DYN_LINK
-//#define BOOST_TEST_MODULE testFixedDistance
+// #define BOOST_TEST_MODULE testFixedDistance
 
 #include <boost/test/unit_test.hpp>
+#include <boost/test/data/test_case.hpp>
 
 #include "../sources/PlaneStrategy.h"
 #include "../sources/Chain.h"
@@ -10,16 +12,15 @@
 
 #include "exampleFunction.h"
 
-
-BOOST_AUTO_TEST_CASE(SimpleLineRecalculation)
+BOOST_DATA_TEST_CASE(SimpleLineRecalculation, params)
 {
     auto plane = PlaneStrategy::getInstance();
     auto chain = new Chain();
-    auto cPlane = new ContinuousPlane();
     AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
 
-    cPlane->setFunction(exampleFunction);
-    plane->setStrategy(cPlane);
+    ContinuousPlane cp = funcNum(sample);
+    plane->setStrategy(&cp);
+
     chain->setFirst(new Point(-3, 2, 0));
     chain->setLast(new Point(3, 2, 0));
     chain->addToChain(new MovingImage(-2, 2, 0));
@@ -30,28 +31,26 @@ BOOST_AUTO_TEST_CASE(SimpleLineRecalculation)
 
     BOOST_CHECK_EQUAL(chain->getPoint(0)->getX(), -1.5);
     BOOST_CHECK_EQUAL(chain->getPoint(0)->getY(), 2);
-    BOOST_CHECK_EQUAL(chain->getPoint(0)->getZ(), 0);
+    BOOST_CHECK_EQUAL(chain->getPoint(0)->getZ(), plane->getZ(-1.5, 2));
     
     BOOST_CHECK_EQUAL(chain->getPoint(1)->getX(), 0);
     BOOST_CHECK_EQUAL(chain->getPoint(1)->getY(), 2);
-    BOOST_CHECK_EQUAL(chain->getPoint(1)->getZ(), 0);
+    BOOST_CHECK_EQUAL(chain->getPoint(1)->getZ(), plane->getZ(0, 2));
 
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getX(), 1.5);
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getY(), 2);
-    BOOST_CHECK_EQUAL(chain->getPoint(2)->getZ(), 0);
+    BOOST_CHECK_EQUAL(chain->getPoint(2)->getZ(), plane->getZ(1.5, 2));
     delete chain;
-    delete cPlane;
 }
 
-BOOST_AUTO_TEST_CASE(SimpleLineRecalculation2)
+BOOST_DATA_TEST_CASE(SimpleLineRecalculation2, params)
 {
     auto plane = PlaneStrategy::getInstance();
     auto chain = new Chain();
-    auto cPlane = new ContinuousPlane();
     AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();
 
-    cPlane->setFunction(exampleFunction);
-    plane->setStrategy(cPlane);
+    ContinuousPlane cp = funcNum(sample);
+    plane->setStrategy(&cp);
 
     chain->setFirst(new Point(-3, 2, 0));
     chain->setLast(new Point(3, 2, 0));
@@ -63,29 +62,27 @@ BOOST_AUTO_TEST_CASE(SimpleLineRecalculation2)
 
     BOOST_CHECK_EQUAL(chain->getPoint(0)->getX(), -1.5);
     BOOST_CHECK_EQUAL(chain->getPoint(0)->getY(), 2);
-    BOOST_CHECK_EQUAL(chain->getPoint(0)->getZ(), 0);
+    BOOST_CHECK_EQUAL(chain->getPoint(0)->getZ(), plane->getZ(-1.5, 2));
     
     BOOST_CHECK_EQUAL(chain->getPoint(1)->getX(), 0);
     BOOST_CHECK_EQUAL(chain->getPoint(1)->getY(), 2);
-    BOOST_CHECK_EQUAL(chain->getPoint(1)->getZ(), 0);
+    BOOST_CHECK_EQUAL(chain->getPoint(1)->getZ(), plane->getZ(0, 2));
 
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getX(), 1.5);
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getY(), 2);
-    BOOST_CHECK_EQUAL(chain->getPoint(2)->getZ(), 0);
+    BOOST_CHECK_EQUAL(chain->getPoint(2)->getZ(), plane->getZ(1.5, 2));
 
     delete chain;
-    delete cPlane;
 }
 
-BOOST_AUTO_TEST_CASE(SimpleVerticalLineRecalculation)
+BOOST_DATA_TEST_CASE(SimpleVerticalLineRecalculation, params)
 {
     auto plane = PlaneStrategy::getInstance();
     auto chain = new Chain();
-    auto cPlane = new ContinuousPlane();
     AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
 
-    cPlane->setFunction(exampleFunction);
-    plane->setStrategy(cPlane);
+    ContinuousPlane cp = funcNum(sample);
+    plane->setStrategy(&cp);
 
     chain->setFirst(new Point(0, 0, 0));
     chain->setLast(new Point(0, 4, 0));
@@ -97,29 +94,29 @@ BOOST_AUTO_TEST_CASE(SimpleVerticalLineRecalculation)
 
     BOOST_CHECK_EQUAL(chain->getPoint(0)->getX(), 0);
     BOOST_CHECK_EQUAL(chain->getPoint(0)->getY(), 1);
-    BOOST_CHECK_EQUAL(chain->getPoint(0)->getZ(), 0);
+    BOOST_CHECK_EQUAL(chain->getPoint(0)->getZ(), plane->getZ(0, 1));
     
     BOOST_CHECK_EQUAL(chain->getPoint(1)->getX(), 0);
     BOOST_CHECK_EQUAL(chain->getPoint(1)->getY(), 2);
-    BOOST_CHECK_EQUAL(chain->getPoint(1)->getZ(), 0);
+    BOOST_CHECK_EQUAL(chain->getPoint(1)->getZ(), plane->getZ(0, 2));
 
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getX(), 0);
     BOOST_CHECK_EQUAL(chain->getPoint(2)->getY(), 3);
-    BOOST_CHECK_EQUAL(chain->getPoint(2)->getZ(), 0);
+    BOOST_CHECK_EQUAL(chain->getPoint(2)->getZ(), plane->getZ(0, 3));
 
     delete chain;
-    delete cPlane;
 }
 
-BOOST_AUTO_TEST_CASE(HeavyLineRecalculation)
+BOOST_DATA_TEST_CASE(HeavyLineRecalculation, params)
 { 
     auto plane = PlaneStrategy::getInstance();
     Chain *chain = new Chain();
-    auto cPlane = new ContinuousPlane();
+
     AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
     
-    cPlane->setFunction(exampleFunction);
-    plane->setStrategy(cPlane);
+    ContinuousPlane cp = funcNum(sample);
+    plane->setStrategy(&cp);
+
     chain->setFirst(new Point(-3, 2, 0));
     chain->setLast(new Point(3, 2, 0));
   
@@ -149,15 +146,15 @@ BOOST_AUTO_TEST_CASE(HeavyLineRecalculation)
     }
 }
 
-BOOST_AUTO_TEST_CASE(HeavyLineRecalculationMove)
+BOOST_DATA_TEST_CASE(HeavyLineRecalculationMove, params)
 { 
     auto plane = PlaneStrategy::getInstance();
     Chain *chain = new Chain();
-    auto cPlane = new ContinuousPlane();
     AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
     
-    cPlane->setFunction(exampleFunction);
-    plane->setStrategy(cPlane);
+    ContinuousPlane cp = funcNum(sample);
+    plane->setStrategy(&cp);
+
     chain->setFirst(new Point(-3, 2, 0));
     chain->setLast(new Point(3, 2, 0));
   
@@ -187,15 +184,15 @@ BOOST_AUTO_TEST_CASE(HeavyLineRecalculationMove)
     }
 }
 
-BOOST_AUTO_TEST_CASE(HeavyLineRecalculationBothAxes)
+BOOST_DATA_TEST_CASE(HeavyLineRecalculationBothAxes, params)
 { 
     auto plane = PlaneStrategy::getInstance();
     Chain *chain = new Chain();
-    auto cPlane = new ContinuousPlane();
     AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
     
-    cPlane->setFunction(exampleFunction);
-    plane->setStrategy(cPlane);
+    ContinuousPlane cp = funcNum(sample);
+    plane->setStrategy(&cp);
+
     chain->setFirst(new Point(-5, -2, 0));
     chain->setLast(new Point(5, 2, 0));
   
@@ -226,15 +223,15 @@ BOOST_AUTO_TEST_CASE(HeavyLineRecalculationBothAxes)
 }
 
 
-BOOST_AUTO_TEST_CASE(SimpleCurveRecalculation)
+BOOST_DATA_TEST_CASE(SimpleCurveRecalculation, params)
 {
     auto plane = PlaneStrategy::getInstance();
     Chain *chain = new Chain();
-    auto cPlane = new ContinuousPlane();
     AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
     
-    cPlane->setFunction(exampleFunction);
-    plane->setStrategy(cPlane);
+    ContinuousPlane cp = funcNum(sample);
+    plane->setStrategy(&cp);
+
     chain->setFirst(new Point(-3, 2, 0));
     chain->setLast(new Point(3, 2, 0));
     chain->addToChain(new MovingImage(-2, 1, 0));
@@ -244,19 +241,19 @@ BOOST_AUTO_TEST_CASE(SimpleCurveRecalculation)
     Chain temp = chainRecalculator->recalculateChain(chain);
     chain->setCopy(&temp);
 
-    double error = 10;
+    double error = 5;
 
     BOOST_CHECK_CLOSE(chain->getPoint(0)->getX(), -1.617, error);
     BOOST_CHECK_CLOSE(chain->getPoint(0)->getY(), 0.809, error);
-    BOOST_CHECK_CLOSE(chain->getPoint(0)->getZ(), 0, error);
+    BOOST_CHECK_CLOSE(chain->getPoint(0)->getZ(), plane->getZ(-1.617, 0.809), error);
     
     BOOST_CHECK_SMALL(chain->getPoint(1)->getX(), 0.1);
     BOOST_CHECK_SMALL(chain->getPoint(1)->getY(), 0.1);
-    BOOST_CHECK_SMALL(chain->getPoint(1)->getZ(), 0.01);
+    BOOST_CHECK_SMALL(chain->getPoint(1)->getZ(), 0.1);
 
     BOOST_CHECK_CLOSE(chain->getPoint(2)->getX(), 1.617, error);
     BOOST_CHECK_CLOSE(chain->getPoint(2)->getY(), 1, error);
-    BOOST_CHECK_CLOSE(chain->getPoint(2)->getZ(), 0, error);
+    BOOST_CHECK_CLOSE(chain->getPoint(2)->getZ(), plane->getZ(chain->getPoint(2)->getX(), chain->getPoint(2)->getY()), error);
 }
 
 BOOST_AUTO_TEST_CASE(MediumCurveRecalculation)
@@ -321,7 +318,7 @@ BOOST_AUTO_TEST_CASE(MediumCurveRecalculation)
     BOOST_CHECK_CLOSE(chain->getPoint(8)->getZ(), 0, error);
 }
 
-BOOST_AUTO_TEST_CASE(NanVerification)
+BOOST_AUTO_TEST_CASE(NanBugVerification)
 {
 
     auto plane = PlaneStrategy::getInstance();
@@ -341,22 +338,22 @@ BOOST_AUTO_TEST_CASE(NanVerification)
     Chain temp = chainRecalculator->recalculateChain(chain);
     chain->setCopy(&temp);
     
-    double error =10000;
+    double error =10;
 
-    BOOST_CHECK_CLOSE(chain->getPoint(0)->getX(), -2.5, error);
-    BOOST_CHECK_CLOSE(chain->getPoint(0)->getY(), 1.5, error);
+    BOOST_CHECK_CLOSE(chain->getPoint(0)->getX(), -2.21, error);
+    BOOST_CHECK_CLOSE(chain->getPoint(0)->getY(), 1.28, error);
     BOOST_CHECK_CLOSE(chain->getPoint(0)->getZ(), 0, error);
     
-    BOOST_CHECK_CLOSE(chain->getPoint(1)->getX(), -2, error);
-    BOOST_CHECK_CLOSE(chain->getPoint(1)->getY(), 1, error);
+    BOOST_CHECK_CLOSE(chain->getPoint(1)->getX(), -1.09, error);
+    BOOST_CHECK_CLOSE(chain->getPoint(1)->getY(), 1.92, error);
     BOOST_CHECK_CLOSE(chain->getPoint(1)->getZ(), 0, error);
 
-    BOOST_CHECK_CLOSE(chain->getPoint(2)->getX(), -1.27, error);
-    BOOST_CHECK_CLOSE(chain->getPoint(2)->getY(), 0.65, error);
+    BOOST_CHECK_CLOSE(chain->getPoint(2)->getX(), 0.055, error);
+    BOOST_CHECK_CLOSE(chain->getPoint(2)->getY(), 2.5, error);
     BOOST_CHECK_CLOSE(chain->getPoint(2)->getZ(), 0, error);
      
-    BOOST_CHECK_CLOSE(chain->getPoint(3)->getX(), -0.62, error);
-    BOOST_CHECK_CLOSE(chain->getPoint(3)->getY(), 0.314, error);
+    BOOST_CHECK_CLOSE(chain->getPoint(3)->getX(), 1.32, error);
+    BOOST_CHECK_CLOSE(chain->getPoint(3)->getY(), 2.27, error);
     BOOST_CHECK_CLOSE(chain->getPoint(3)->getZ(), 0, error);
     
     BOOST_CHECK_CLOSE(chain->getPoint(4)->getX(), 1.8699, error);
@@ -364,23 +361,3 @@ BOOST_AUTO_TEST_CASE(NanVerification)
     BOOST_CHECK_CLOSE(chain->getPoint(4)->getZ(), 0, error);
 }
 
-
-BOOST_AUTO_TEST_CASE(InifiniteLoopProblem)
-{
-
-    auto plane = PlaneStrategy::getInstance();
-    Chain *chain = new Chain();
-    auto cPlane = new ContinuousPlane();
-    AbstractChainRecalculator *chainRecalculator = new FixedDistanceChainRecalculator();    
-    
-    cPlane->setFunction(exampleFunction);
-    plane->setStrategy(cPlane);
-    chain->setFirst(new Point(-2.3, 0, 0));
-    chain->setLast(new Point(2.3, 0, 0));
-
-    Chain temp = chainRecalculator->recalculateChain(chain);
-    chain->setCopy(&temp);
-    
-    double error =10000;
-}
-// */

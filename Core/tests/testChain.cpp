@@ -1,3 +1,4 @@
+#pragma once
 #define BOOST_TEST_DYN_LINK
 // #define BOOST_TEST_MODULE "C++ Unit Tests for My Thesis" //needed for standalone module
 
@@ -10,23 +11,6 @@
 
 #include "exampleFunction.h"
 
-std::array<double, 5> params = {0, 1, 2, 3, 4};
-
-ContinuousPlane funcNum(int n)
-{
-    ContinuousPlane cp;
-    if(n == 0)
-        cp.setFunction(exampleFunction);
-    if(n == 1)
-        cp.setFunction(exampleFunction2);
-    if(n == 2)
-        cp.setFunction(exampleFunction3);
-    if(n == 3)
-        cp.setFunction(exampleFunction4);
-    if(n==4)
-        cp.setFunction(exampleFunction5);
-    return cp;
-}
 
 BOOST_DATA_TEST_CASE(BasicChain, params)
 {
