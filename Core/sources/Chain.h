@@ -35,6 +35,7 @@ namespace GNEB
         int size();
         double length2D();
         double length3D();
+        double findMaxEnergy();
         void print();        
         std::string stringify();
         void erase();

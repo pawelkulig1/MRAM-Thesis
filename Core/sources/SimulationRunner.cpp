@@ -35,7 +35,7 @@ Chain SimulationRunner::findBestChain()
 
     for(Chain c: chainStorage)
     {
-        if(c.length3D() < min.length3D())
+        if(metricsFunction(c) < metricsFunction(min))
         {
             min.setCopy(c);
         }
@@ -52,8 +52,8 @@ double SimulationRunner::findLastNMax()
     {
         for(int j=0;j<N;j++)
         {
-            if(chainStorage[i - j - 2].length3D() > max)
-                max = chainStorage[i - j - 2].length3D();
+            if(metricsFunction(chainStorage[i - j - 2]) > max)
+                max = metricsFunction(chainStorage[i - j - 2]);
         }
     }
     else
@@ -65,7 +65,7 @@ double SimulationRunner::findLastNMax()
 bool SimulationRunner::isBreakConditionMet()
 {
     double max = findLastNMax();
-    if(max >= chain.length3D())
+    if(max >= metricsFunction(chain))
     {
         return false;
     }
@@ -110,7 +110,8 @@ void SimulationRunner::end()
 {
     std::cout<<"===================="<<std::endl;
     chain.print();
-    std::cout<<"len: " << chain.length3D()<<std::endl;
+    std::cout<<"metrics score: " << metricsFunction(chain)<<std::endl;
+    std::cout<<"Energy required: " << chain.findMaxEnergy()<<std::endl;
 
     if(isFifoEnabled)
     {
@@ -120,3 +121,7 @@ void SimulationRunner::end()
     }
 }
 
+void SimulationRunner::setMetricsFunction(std::function<double (Chain &c)> ms)
+{
+    this->metricsFunction = ms;
+}

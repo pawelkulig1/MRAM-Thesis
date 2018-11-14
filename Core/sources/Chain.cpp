@@ -116,6 +116,19 @@ double Chain::length3D()
     return length;
 }
 
+double Chain::findMaxEnergy()
+{
+    double maxEnergy = chain[0].getZ();
+    for(MovingImage m: chain)
+    {
+        if(m.getZ() > maxEnergy){
+            maxEnergy = m.getZ();
+        }
+    }
+    return maxEnergy;
+}
+
+
 int Chain::size()
 {
     return this->chain.size();

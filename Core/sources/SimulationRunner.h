@@ -2,6 +2,7 @@
 #include <vector>
 #include "Chain.h"
 #include "AbstractChainRecalculator.h"
+#include <functional>
 
 namespace GNEB
 {
@@ -16,6 +17,7 @@ namespace GNEB
         bool isFifoEnabled;
         std::string fifoPath;
         int iterationNumber;
+        std::function<double (Chain &c)> metricsFunction;
 
     public:
         SimulationRunner(Chain c);
@@ -26,7 +28,6 @@ namespace GNEB
         bool isBreakConditionMet();
         bool run();
         void end();
-        
-
+        void setMetricsFunction(std::function<double (Chain &c)> mf);
     };
 }

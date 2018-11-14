@@ -4,6 +4,7 @@
 #include "sources/SimulationBuilder.h"
 #include "sources/commonDefines.h"
 #include "sources/SimulationRunner.h"
+#include <time.h>
 
 using namespace std;
 using namespace GNEB;
@@ -34,15 +35,29 @@ double func(double x, double y)
     return out;
 }
 
+double metricsFunction(Chain &c)
+{
+    double max = c.getPoint(0)->getZ() + 1 * c.length2D();
+    for(int i=0;i<c.size();i++)
+    {
+        if(c.getPoint(i)->getZ() + 1 * c.length2D() > max)
+        {
+            max = c.getPoint(i)->getZ() + 1 * c.length2D();
+        }
+    }
+    return max;
+}
+
+
 int main()
 {
     SimulationBuilder sb;
     Chain c;
     c.setCopy(sb.buildContinuous(func));
     SimulationRunner SM(c);
+    SM.setMetricsFunction(metricsFunction);
     FixedDistanceChainRecalculator fdcr;
     SM.setChainRecalculator(fdcr);
     SM.run();
     return 0;
-
 }
