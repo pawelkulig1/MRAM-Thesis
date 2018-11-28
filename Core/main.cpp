@@ -5,6 +5,7 @@
 #include "sources/commonDefines.h"
 #include "sources/SimulationRunner.h"
 #include <time.h>
+#include <array>
 
 using namespace std;
 using namespace GNEB;
@@ -13,6 +14,10 @@ using boost::any_cast;
 #define PIPE false
 #define DEBUG false
 
+const double u0 = 12.56637e-7;
+const double Ms = 1200e3;
+const double K = 500e3;
+const Eigen::Vector3d a(1,1,1);
 
 double func(double x, double y)
 {
@@ -32,7 +37,7 @@ double func(double x, double y)
         out += data[i][0] * exp(-(pow(x + data[i][2], 2) + \
 				pow(y + data[i][3], 2))/(2 * pow(data[i][1], 2)));
     }
-    return out;
+    return out * 0.002 * (2*K)/(u0*Ms);
 }
 
 double metricsFunction(Chain &c)
@@ -47,7 +52,6 @@ double metricsFunction(Chain &c)
     }
     return max;
 }
-
 
 int main()
 {
